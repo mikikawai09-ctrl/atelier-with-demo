@@ -1,0 +1,3466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier with 運営ノート｜お試し版</title>
+<style>
+  :root {
+    --paper: #faf8f5;
+    --card: #ffffff;
+    --sunken: #f1ede7;
+    --ink: #2b2733;
+    --ink-soft: #6b6472;
+    --ink-faint: #a09aa6;
+    --line: #e5dfd7;
+    --line-strong: #cfc7bc;
+    --teal: #37718e;
+    --teal-deep: #2a586f;
+    --teal-soft: #e3edf2;
+    --blush: #b95c7e;
+    --blush-soft: #f5e6ec;
+    --st-stock: #3e7a52;   --st-stock-bg: #e4f0e8;
+    --st-consign: #9a6d1f; --st-consign-bg: #f5ecd8;
+    --st-exhibit: #37718e; --st-exhibit-bg: #e3edf2;
+    --st-reserved: #7a5296;--st-reserved-bg: #efe6f5;
+    --st-sold: #6b6472;    --st-sold-bg: #ebe8ee;
+    --shadow: 0 1px 3px rgba(43,39,51,0.06), 0 6px 20px rgba(43,39,51,0.06);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic Medium", "Noto Sans JP", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- header ---------- */
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 24px 0;
+  }
+  .brand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 12px;
+    margin-bottom: 14px;
+  }
+  .brand h1 {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+  .brand .sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+  }
+  .brand .backup-area {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+  nav.tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+  }
+  .tab {
+    appearance: none;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    padding: 10px 18px 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active {
+    color: var(--teal-deep);
+    font-weight: 600;
+    border-bottom-color: var(--teal);
+  }
+  .tab .soon {
+    font-size: 10px;
+    background: var(--sunken);
+    color: var(--ink-faint);
+    border-radius: 100px;
+    padding: 1px 7px;
+    margin-left: 5px;
+    vertical-align: 1px;
+  }
+
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 26px 20px 80px;
+  }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  h2.view-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .view-lead {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    appearance: none;
+    font: inherit;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 9px 18px;
+    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--sunken); }
+  .btn.primary {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn.primary:hover { background: var(--teal-deep); }
+  .btn.small { font-size: 12.5px; padding: 5px 12px; border-radius: 6px; }
+  .btn.danger-text { color: #a33d3d; border: none; background: none; }
+  .btn.danger-text:hover { background: #f6e7e7; }
+  .btn:focus-visible, .tab:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 1px;
+  }
+
+  /* ---------- dashboard ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+  }
+  .stat-card .label { font-size: 12.5px; color: var(--ink-soft); }
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--teal-deep);
+  }
+  .stat-card .value .unit { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-left: 2px; }
+
+  .dash-section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .dash-section h3 {
+    font-size: 14px;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .dash-empty { color: var(--ink-faint); font-size: 13.5px; }
+
+  /* ---------- works form ---------- */
+  .form-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .form-panel.open { display: block; }
+  .form-panel h3 { margin: 0 0 14px; font-size: 15px; }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px 16px;
+    margin-bottom: 14px;
+  }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .field label .req { color: var(--blush); }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field.wide { grid-column: 1 / -1; }
+  .form-actions { display: flex; gap: 10px; }
+
+  /* ---------- works list ---------- */
+  .list-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .list-controls input[type="search"] {
+    font: inherit;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--card);
+    flex: 1;
+    min-width: 160px;
+  }
+  .list-controls select {
+    font: inherit;
+    font-size: 13.5px;
+    padding: 8px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--card);
+  }
+
+  .work-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: center;
+  }
+  .work-card .title { font-weight: 600; font-size: 15px; }
+  .work-card .meta { font-size: 12.5px; color: var(--ink-soft); }
+  .work-card .price {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    margin-left: auto;
+  }
+  .work-card .actions { display: flex; gap: 6px; }
+  .work-card .note-line {
+    flex-basis: 100%;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    border-top: 1px dashed var(--line);
+    padding-top: 6px;
+    margin-top: 2px;
+  }
+  .pill {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .pill.kind { background: var(--sunken); color: var(--ink-soft); font-weight: 500; }
+  .pill.st-在庫 { background: var(--st-stock-bg); color: var(--st-stock); }
+  .pill.st-委託中 { background: var(--st-consign-bg); color: var(--st-consign); }
+  .pill.st-展示中 { background: var(--st-exhibit-bg); color: var(--st-exhibit); }
+  .pill.st-売約済 { background: var(--st-reserved-bg); color: var(--st-reserved); }
+  .pill.st-販売済 { background: var(--st-sold-bg); color: var(--st-sold); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-faint);
+    background: var(--card);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+    font-size: 14px;
+  }
+
+  /* ---------- イベント・参加者 ---------- */
+  .pill.st-予定 { background: var(--st-exhibit-bg); color: var(--st-exhibit); }
+  .pill.st-準備中 { background: var(--st-consign-bg); color: var(--st-consign); }
+  .pill.st-開催済 { background: var(--st-sold-bg); color: var(--st-sold); }
+  .pill.st-中止 { background: #f6e7e7; color: #a33d3d; }
+  .check-inline {
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .event-date {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--teal-deep);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .joiners {
+    flex-basis: 100%;
+    border-top: 1px dashed var(--line);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .joiners summary {
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--teal-deep);
+    user-select: none;
+  }
+  .joiners .joiner-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 10px 2px 4px;
+  }
+  .joiners label {
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .joiners .none-msg { font-size: 13px; color: var(--ink-faint); padding-top: 8px; }
+
+  /* ---------- coming soon ---------- */
+  .coming {
+    background: var(--card);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+    padding: 36px 24px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .coming b { display: block; font-size: 15px; color: var(--ink); margin-bottom: 6px; }
+
+  footer {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.9;
+  }
+
+  /* ---------- 使い方ガイド ---------- */
+  .guide .dash-section h3 {
+    font-size: 15px;
+    color: var(--teal-deep);
+  }
+  .guide p { margin: 6px 0; font-size: 14px; }
+  .guide ul, .guide ol { margin: 6px 0; padding-left: 24px; font-size: 14px; }
+  .guide li { margin: 4px 0; }
+  .guide .tag {
+    display: inline-block;
+    background: var(--teal-soft);
+    color: var(--teal-deep);
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 1px 8px;
+    margin-right: 2px;
+    white-space: nowrap;
+  }
+  .guide .caution {
+    background: var(--blush-soft);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    margin-top: 8px;
+  }
+
+  /* ---------- 作品画像・サムネイル ---------- */
+  .thumb-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--sunken);
+    flex: none;
+    cursor: zoom-in;
+  }
+  .thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb-box.sm { width: 44px; height: 44px; border-radius: 6px; }
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(43, 39, 51, 0.82);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    cursor: zoom-out;
+  }
+  #lightbox[hidden] { display: none; }
+  #lightbox img {
+    max-width: 92vw;
+    max-height: 82vh;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  #lightbox .cap { color: #fff; font-size: 14px; }
+
+  .img-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .img-preview .thumb-box { cursor: default; }
+
+  /* ---------- お気に入り・タグ ---------- */
+  .fav-btn {
+    appearance: none;
+    border: none;
+    background: none;
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--line-strong);
+    padding: 0 2px;
+  }
+  .fav-btn.on { color: #dfa937; }
+  .tag-pill {
+    font-size: 11px;
+    background: var(--teal-soft);
+    color: var(--teal-deep);
+    border-radius: 100px;
+    padding: 1px 9px;
+    white-space: nowrap;
+  }
+  .note-line a {
+    color: var(--teal-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .note-line a:hover { border-bottom-color: var(--teal); }
+
+  /* ---------- フォームの折りたたみ ---------- */
+  .form-fold {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: var(--paper);
+  }
+  .form-fold summary {
+    cursor: pointer;
+    padding: 9px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--teal-deep);
+    user-select: none;
+  }
+  .form-fold .form-grid {
+    padding: 4px 14px 14px;
+    margin-bottom: 0;
+  }
+  .cost-view {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    background: var(--card);
+    border: 1px dashed var(--line-strong);
+    border-radius: 7px;
+    padding: 8px 12px;
+  }
+  .cost-view .minus { color: #a33d3d; font-weight: 600; }
+  .cost-view .plus { color: var(--st-stock); font-weight: 600; }
+
+  /* ---------- AIアシスタント・状態の履歴 ---------- */
+  .ai-hint {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 0 14px 10px;
+  }
+  .ai-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 14px 14px;
+  }
+  .hist-box {
+    font-size: 13.5px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 8px 12px;
+  }
+  .hist-box .hist-line { padding: 2px 0; }
+  .hist-box .hist-empty { color: var(--ink-faint); font-size: 13px; }
+
+  /* ---------- 売上グラフ ---------- */
+  .dash-section h4 {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 14px 0 6px;
+  }
+  .year-line { margin: 0; font-size: 14px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding: 1.5px 0;
+  }
+  .bar-row .bar-label {
+    width: 92px;
+    text-align: right;
+    color: var(--ink-soft);
+    flex: none;
+    white-space: nowrap;
+  }
+  .bar-row .bar-track {
+    flex: 1;
+    background: var(--sunken);
+    border-radius: 100px;
+    height: 13px;
+    overflow: hidden;
+  }
+  .bar-row .bar {
+    display: block;
+    height: 100%;
+    background: var(--teal);
+    border-radius: 100px;
+    min-width: 2px;
+  }
+  .bar-row .bar.zero { background: transparent; }
+  .bar-row .bar-val {
+    width: 90px;
+    text-align: right;
+    flex: none;
+    white-space: nowrap;
+  }
+  .chart-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 4px 24px;
+  }
+
+  /* ---------- ダイアログ（QR・復元ポイント） ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(43, 39, 51, 0.55);
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .overlay[hidden] { display: none; }
+  .overlay .panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 82vh;
+    overflow: auto;
+  }
+  .qr-item {
+    display: inline-block;
+    text-align: center;
+    margin: 6px 14px 10px 0;
+    vertical-align: top;
+  }
+  .qr-item img {
+    width: 150px;
+    height: 150px;
+    image-rendering: pixelated;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .qr-item .qr-label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .qr-item .qr-url {
+    font-size: 11px;
+    color: var(--ink-faint);
+    max-width: 170px;
+    word-break: break-all;
+  }
+  .snap-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 2px;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .snap-row .meta { color: var(--ink-soft); font-size: 12.5px; flex: 1; }
+
+  /* ---------- Ver.2: 編集画面のタブ ---------- */
+  .ftabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+    overflow-x: auto;
+  }
+  .ftab {
+    appearance: none;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 13.5px;
+    padding: 7px 16px 9px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .ftab:hover { color: var(--ink); }
+  .ftab.active {
+    color: var(--teal-deep);
+    font-weight: 600;
+    border-bottom-color: var(--teal);
+  }
+  .fpane { display: none; }
+  .fpane.active { display: block; }
+
+  /* ---------- Ver.2: 制作状況の色分け ---------- */
+  .pill.pp-アイデア { background: var(--sunken); color: var(--ink-soft); }
+  .pill.pp-制作中 { background: #fbeccf; color: #9a6d1f; }
+  .pill.pp-乾燥中 { background: #fdf4e0; color: #a3752f; }
+  .pill.pp-額装待ち { background: var(--st-reserved-bg); color: var(--st-reserved); }
+  .pill.pp-撮影待ち { background: var(--blush-soft); color: var(--blush); }
+  .pill.pp-販売準備 { background: var(--teal-soft); color: var(--teal-deep); }
+  .pill.pp-販売中 { background: var(--st-exhibit-bg); color: var(--st-exhibit); }
+  .pill.pp-売約 { background: var(--st-reserved-bg); color: var(--st-reserved); }
+  .pill.pp-発送待ち { background: var(--st-stock-bg); color: var(--st-stock); }
+  .pill.pp-販売済 { background: var(--st-sold-bg); color: var(--st-sold); }
+
+  /* ---------- Ver.2: クイック編集 ---------- */
+  .pill-select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    cursor: pointer;
+  }
+  .pill-select.st-在庫 { background: var(--st-stock-bg); color: var(--st-stock); }
+  .pill-select.st-委託中 { background: var(--st-consign-bg); color: var(--st-consign); }
+  .pill-select.st-展示中 { background: var(--st-exhibit-bg); color: var(--st-exhibit); }
+  .pill-select.st-売約済 { background: var(--st-reserved-bg); color: var(--st-reserved); }
+  .pill-select.st-販売済 { background: var(--st-sold-bg); color: var(--st-sold); }
+  .price-input {
+    font: inherit;
+    font-size: 14px;
+    width: 110px;
+    padding: 4px 8px;
+    border: 1px solid var(--teal);
+    border-radius: 7px;
+    margin-left: auto;
+  }
+
+  /* ---------- Ver.2: コンパクトな作品カード ---------- */
+  .work-card.compact {
+    padding: 10px 14px;
+    gap: 6px 10px;
+    cursor: pointer;
+  }
+  .work-card.compact:hover { border-color: var(--line-strong); }
+  .work-card.compact .thumb-box { width: 56px; height: 56px; }
+  .work-card.compact .price { cursor: pointer; }
+
+  /* ---------- Ver.2: きょうやること ---------- */
+  .today-box { border-left: 4px solid var(--teal); }
+  .task-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 2px;
+    font-size: 14.5px;
+    cursor: pointer;
+    border-bottom: 1px dashed var(--line);
+  }
+  .task-line:last-child { border-bottom: none; }
+  .task-line input { width: 17px; height: 17px; accent-color: var(--teal); cursor: pointer; }
+
+  /* ---------- Ver.2: 絞り込みの折りたたみ ---------- */
+  .more-filters { margin-bottom: 16px; }
+  .more-filters summary {
+    font-size: 13px;
+    color: var(--teal-deep);
+    cursor: pointer;
+    user-select: none;
+    padding: 0 0 10px;
+  }
+  .more-filters .list-controls { margin-bottom: 4px; }
+
+  /* ---------- 印刷・共有ビュー ---------- */
+  #printSheet { display: none; }
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    header, main, footer, .toast { display: none !important; }
+    #printSheet { display: block; }
+  }
+  #printSheet h1 {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  #printSheet .sheet-sub {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  #printSheet .info-line { font-size: 12.5px; margin: 3px 0; }
+  #printSheet table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  #printSheet th, #printSheet td {
+    border: 1px solid #888;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  #printSheet th { background: #f0ede8; font-weight: 600; white-space: nowrap; }
+  #printSheet td.cell-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #printSheet td.cell-no { text-align: right; width: 30px; color: #555; }
+  #printSheet td.cell-check { width: 60px; }
+  #printSheet .sheet-note { font-size: 11px; color: #555; margin-top: 10px; }
+  #printSheet tr { break-inside: avoid; }
+  #printSheet .qr-item {
+    display: inline-block;
+    text-align: center;
+    margin: 8px 26px 8px 0;
+    vertical-align: top;
+  }
+  #printSheet .qr-item img { width: 150px; height: 150px; image-rendering: pixelated; }
+  #printSheet .qr-item .qr-label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  #printSheet .qr-item .qr-url { font-size: 10px; color: #555; max-width: 170px; word-break: break-all; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: #fff;
+    font-size: 13.5px;
+    padding: 10px 22px;
+    border-radius: 100px;
+    opacity: 0;
+    transition: transform 0.25s, opacity 0.25s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .toast { transition: none; }
+  }
+
+  /* ---------- お試し版 ---------- */
+  .demo-ribbon {
+    background: linear-gradient(90deg, #2a586f, #37718e);
+    color: #fff;
+    padding: 9px 20px;
+    font-size: 12.5px;
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .demo-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--blush-soft);
+    color: var(--blush);
+    font-family: "Hiragino Sans", "Yu Gothic Medium", sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    vertical-align: 2px;
+  }
+  .demo-welcome {
+    background: linear-gradient(135deg, #f5fafc, #fff8fb);
+    border-color: #cddfe7;
+  }
+  .demo-welcome-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .demo-welcome h3 { font-size: 15px; color: var(--teal-deep); }
+  .demo-welcome p { margin: 4px 0 0; color: var(--ink-soft); font-size: 13px; }
+  .demo-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .demo-step {
+    appearance: none;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.9);
+    color: var(--ink);
+    padding: 12px;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+  }
+  .demo-step:hover { border-color: var(--teal); background: #fff; }
+  .demo-step b { display: block; color: var(--teal-deep); font-size: 13px; margin-bottom: 2px; }
+  .demo-step span { color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; }
+  @media (max-width: 640px) {
+    .demo-ribbon { padding: 8px 14px; text-align: left; }
+    .demo-welcome-head { display: block; }
+    .demo-welcome-head .btn { margin-top: 10px; }
+    .demo-steps { grid-template-columns: 1fr; }
+    .demo-step { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">これは紹介用のお試し版です。表示される氏名・作品・金額はすべて架空のサンプルです。</div>
+
+<header>
+  <div class="brand">
+    <h1>Atelier with 運営ノート <span class="demo-badge">お試し版</span></h1>
+    <span class="sub">ARTIST MANAGEMENT DEMO</span>
+    <span class="backup-area">
+      <button class="btn small" id="btnResetDemo">サンプルに戻す</button>
+      <button class="btn small" id="btnSnapshots">復元ポイント</button>
+      <button class="btn small" id="btnExport">バックアップを保存</button>
+      <button class="btn small" id="btnImport">バックアップから復元</button>
+      <input type="file" id="fileImport" accept=".json" hidden>
+    </span>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="dashboard">ダッシュボード</button>
+    <button class="tab" data-view="works">作品・在庫</button>
+    <button class="tab" data-view="events">イベント</button>
+    <button class="tab" data-view="people">お客様</button>
+    <button class="tab" data-view="sales">売上</button>
+    <button class="tab" data-view="guide">使い方</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ダッシュボード -->
+  <section class="view active" id="view-dashboard">
+    <h2 class="view-title">きょうのアトリエ</h2>
+    <p class="view-lead">作品の状況をひと目で確認できます。</p>
+    <div class="dash-section demo-welcome">
+      <div class="demo-welcome-head">
+        <div>
+          <h3>まずは、気になるところを触ってみてください</h3>
+          <p>登録・編集・検索・集計まで、実際の使い心地をサンプルデータで試せます。</p>
+        </div>
+        <button class="btn small" id="btnResetDemoTop">最初の状態に戻す</button>
+      </div>
+      <div class="demo-steps">
+        <button class="demo-step" data-demo-view="works"><b>1. 作品を管理する</b><span>作品カルテ、在庫状況、価格や制作記録を見る</span></button>
+        <button class="demo-step" data-demo-view="events"><b>2. イベントを準備する</b><span>予定、参加者、準備物をまとめて確認する</span></button>
+        <button class="demo-step" data-demo-view="sales"><b>3. 売上を振り返る</b><span>月ごとの合計や内訳をグラフで見る</span></button>
+      </div>
+    </div>
+    <div class="dash-section today-box">
+      <h3>きょうやること</h3>
+      <div id="todayTasks"></div>
+    </div>
+    <div class="stat-grid" id="dashStats"></div>
+    <div class="dash-section">
+      <h3>最近さわった作品</h3>
+      <div id="dashRecent"></div>
+    </div>
+    <div class="dash-section">
+      <h3>これからの予定</h3>
+      <div id="dashEvents"></div>
+    </div>
+    <div class="dash-section">
+      <h3>売上のようす</h3>
+      <div id="dashSales"></div>
+    </div>
+  </section>
+
+  <!-- 作品・在庫 -->
+  <section class="view" id="view-works">
+    <h2 class="view-title">作品・在庫</h2>
+    <p class="view-lead">原画・アクセサリーなどの作品を登録して、いまどこにあるか（在庫・委託・展示・販売済）を管理します。</p>
+
+    <div class="list-controls">
+      <button class="btn primary" id="btnNewWork">＋ 作品を登録</button>
+      <input type="search" id="searchWorks" placeholder="番号・タイトル・タグ・サイズで検索">
+      <select id="filterStatus">
+        <option value="">状態：すべて</option>
+        <option>在庫</option>
+        <option>委託中</option>
+        <option>展示中</option>
+        <option>売約済</option>
+        <option>販売済</option>
+      </select>
+      <select id="filterProd">
+        <option value="">制作状況：すべて</option>
+        <option>アイデア</option>
+        <option>制作中</option>
+        <option>乾燥中</option>
+        <option>額装待ち</option>
+        <option>撮影待ち</option>
+        <option>販売準備</option>
+        <option>販売中</option>
+        <option>売約</option>
+        <option>発送待ち</option>
+        <option>販売済</option>
+      </select>
+      <label class="check-inline"><input type="checkbox" id="favOnly"> ★のみ</label>
+    </div>
+    <details class="more-filters">
+      <summary>こまかく絞り込む・並び替え・印刷</summary>
+      <div class="list-controls">
+        <select id="filterKind">
+          <option value="">種類：すべて</option>
+          <option>原画</option>
+          <option>アクセサリー</option>
+          <option>グッズ</option>
+          <option>その他</option>
+        </select>
+        <select id="filterTag"></select>
+        <select id="filterYear"></select>
+        <select id="filterPrice">
+          <option value="">価格：すべて</option>
+          <option value="u5">〜4,999円</option>
+          <option value="u10">5,000〜9,999円</option>
+          <option value="u30">10,000〜29,999円</option>
+          <option value="o30">30,000円〜</option>
+        </select>
+        <select id="sortWorks">
+          <option value="new">登録が新しい順</option>
+          <option value="finish">完成日が新しい順</option>
+          <option value="start">制作開始日が新しい順</option>
+          <option value="priceHigh">価格が高い順</option>
+          <option value="priceLow">価格が安い順</option>
+        </select>
+        <button class="btn" id="btnPrintWorks" title="いま表示中の作品を一覧表にして印刷・PDF保存します">印刷・PDF</button>
+      </div>
+    </details>
+
+    <div class="form-panel" id="workForm">
+      <h3 id="workFormTitle">新しい作品を登録</h3>
+      <p class="view-lead" style="margin-bottom:12px;">タイトルだけでも保存OK。ほかの項目はあとからいつでも書き足せます。</p>
+      <div class="ftabs">
+        <button class="ftab active" type="button" data-pane="basic">基本</button>
+        <button class="ftab" type="button" data-pane="making">制作</button>
+        <button class="ftab" type="button" data-pane="sell">販売</button>
+        <button class="ftab" type="button" data-pane="link">リンク</button>
+        <button class="ftab" type="button" data-pane="ai">AI</button>
+      </div>
+
+      <div class="fpane active" data-pane="basic">
+      <div class="form-grid">
+        <div class="field">
+          <label for="wTitle">タイトル <span class="req">＊必須</span></label>
+          <input id="wTitle" type="text" placeholder="例：ゆらぎ No.3">
+        </div>
+        <div class="field">
+          <label for="wKind">種類</label>
+          <select id="wKind">
+            <option>原画</option>
+            <option>アクセサリー</option>
+            <option>グッズ</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wSeries">シリーズ・技法</label>
+          <input id="wSeries" type="text" placeholder="例：アルコールインク">
+        </div>
+        <div class="field">
+          <label for="wSize">サイズ</label>
+          <input id="wSize" type="text" placeholder="例：F4 / 30×30cm">
+        </div>
+        <div class="field">
+          <label for="wPrice">価格（円）</label>
+          <input id="wPrice" type="number" min="0" step="100" placeholder="例：18000">
+        </div>
+        <div class="field">
+          <label for="wStatus">状態</label>
+          <select id="wStatus">
+            <option>在庫</option>
+            <option>委託中</option>
+            <option>展示中</option>
+            <option>売約済</option>
+            <option>販売済</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wProd">制作状況</label>
+          <select id="wProd">
+            <option value="">未設定</option>
+            <option>アイデア</option>
+            <option>制作中</option>
+            <option>乾燥中</option>
+            <option>額装待ち</option>
+            <option>撮影待ち</option>
+            <option>販売準備</option>
+            <option>販売中</option>
+            <option>売約</option>
+            <option>発送待ち</option>
+            <option>販売済</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wNo">作品番号（自動でつきます・変更OK）</label>
+          <input id="wNo" type="text" placeholder="例：AW-2026-001">
+        </div>
+        <div class="field wide">
+          <label for="wImage">作品の画像</label>
+          <input id="wImage" type="file" accept="image/*">
+          <div class="img-preview" id="wImagePreview" style="margin-top:8px; display:none;">
+            <span class="thumb-box"><img id="wImagePreviewImg" alt=""></span>
+            <button class="btn small danger-text" id="btnRemoveImage" type="button">画像を外す</button>
+          </div>
+        </div>
+        <div class="field wide">
+          <label for="wTags">タグ（読点・カンマ・スペース区切りで複数OK）</label>
+          <input id="wTags" type="text" placeholder="例：青、海、癒し、アルコールインク">
+        </div>
+        <div class="field wide">
+          <label for="wNote">メモ</label>
+          <textarea id="wNote" placeholder="例：ギャラリー○○に委託中（〜8月末）"></textarea>
+        </div>
+      </div>
+      </div>
+
+      <div class="fpane" data-pane="making">
+        <div class="form-grid">
+          <div class="field">
+            <label for="wStart">制作開始日</label>
+            <input id="wStart" type="date">
+          </div>
+          <div class="field">
+            <label for="wFinish">完成日</label>
+            <input id="wFinish" type="date">
+          </div>
+          <div class="field">
+            <label for="wHours">制作時間</label>
+            <input id="wHours" type="text" placeholder="例：3時間 ／ 2日">
+          </div>
+          <div class="field">
+            <label for="wRating">満足度</label>
+            <select id="wRating">
+              <option value="">未設定</option>
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★</option>
+              <option value="3">★★★</option>
+              <option value="2">★★</option>
+              <option value="1">★</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="wMaterials">使用画材</label>
+            <input id="wMaterials" type="text" placeholder="例：コピックインク、ジェルメディウム">
+          </div>
+          <div class="field">
+            <label for="wColors">使用色</label>
+            <input id="wColors" type="text" placeholder="例：ターコイズ、ゴールド">
+          </div>
+          <div class="field wide">
+            <label for="wMakingNote">制作時のメモ</label>
+            <textarea id="wMakingNote" placeholder="例：乾かす前にゴールドを垂らすとにじみがきれい"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="fpane" data-pane="sell">
+        <div class="form-grid">
+          <div class="field">
+            <label for="wCostFrame">額代（円）</label>
+            <input id="wCostFrame" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostPaper">紙代（円）</label>
+            <input id="wCostPaper" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostInk">インク代（円）</label>
+            <input id="wCostInk" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostMaterial">材料費（ジェルメディウム等・円）</label>
+            <input id="wCostMaterial" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostPacking">梱包費（円）</label>
+            <input id="wCostPacking" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostShipping">送料（円）</label>
+            <input id="wCostShipping" type="number" min="0" class="cost-input">
+          </div>
+          <div class="field">
+            <label for="wCostOther">その他（円）</label>
+            <input id="wCostOther" type="number" min="0" class="cost-input">
+          </div>
+          <div class="cost-view" id="costView">原価合計 0円</div>
+          <div class="field wide">
+            <label for="wExhibit">展示歴</label>
+            <textarea id="wExhibit" placeholder="例：2026/5 個展「いろのゆくえ」、2026/7 ギャラリー青"></textarea>
+          </div>
+          <div class="field">
+            <label for="wBuyer">購入者</label>
+            <input id="wBuyer" type="text" placeholder="例：山田 花子さん">
+          </div>
+          <div class="field">
+            <label for="wStorage">保管場所</label>
+            <input id="wStorage" type="text" placeholder="例：アトリエ棚2段目">
+          </div>
+          <div class="field wide">
+            <label>状態の履歴（状態を変えると自動で記録されます）</label>
+            <div id="statusHistoryView" class="hist-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fpane" data-pane="link">
+        <div class="form-grid">
+          <div class="field">
+            <label for="wUrlBase">BASE商品ページURL</label>
+            <input id="wUrlBase" type="url" placeholder="https://">
+          </div>
+          <div class="field">
+            <label for="wUrlHp">ホームページURL</label>
+            <input id="wUrlHp" type="url" placeholder="https://">
+          </div>
+          <div class="field">
+            <label for="wUrlSns">SNS投稿URL</label>
+            <input id="wUrlSns" type="url" placeholder="https://">
+          </div>
+          <div class="field">
+            <label for="wUrlVideo">制作動画URL</label>
+            <input id="wUrlVideo" type="url" placeholder="https://">
+          </div>
+          <div class="field wide">
+            <button class="btn small" type="button" id="btnQr">QRコードを表示・印刷（展示会用）</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fpane" data-pane="ai">
+        <div class="ai-hint">入力中の作品情報から「お願い文」をつくってコピーします。ChatGPTやClaude（クロード）に貼り付けて使ってください。</div>
+        <div class="ai-btns">
+          <button class="btn small" type="button" id="btnAiTitle">タイトル案</button>
+          <button class="btn small" type="button" id="btnAiIntro">紹介文</button>
+          <button class="btn small" type="button" id="btnAiInsta">Instagram投稿文</button>
+          <button class="btn small" type="button" id="btnAiBase">BASE商品説明</button>
+          <button class="btn small" type="button" id="btnAiTags">ハッシュタグ</button>
+          <button class="btn small primary" type="button" id="btnSellCopy">販売ページ用テキストをコピー</button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="btnSaveWork">登録する</button>
+        <button class="btn" id="btnCancelWork">やめる</button>
+        <button class="btn danger-text" id="btnDeleteWork" style="margin-left:auto; display:none;">この作品を削除</button>
+      </div>
+    </div>
+
+    <div id="workList"></div>
+  </section>
+
+  <!-- イベント -->
+  <section class="view" id="view-events">
+    <h2 class="view-title">イベント</h2>
+    <p class="view-lead">個展・ワークショップ・レッスンの予定と準備をここで管理します。参加する人のチェックもできます。</p>
+
+    <div class="list-controls">
+      <button class="btn primary" id="btnNewEvent">＋ 新しいイベントを登録</button>
+      <input type="search" id="searchEvents" placeholder="タイトル・会場で検索">
+      <select id="filterEventKind">
+        <option value="">種類：すべて</option>
+        <option>個展</option>
+        <option>ワークショップ</option>
+        <option>レッスン</option>
+        <option>その他</option>
+      </select>
+      <label class="check-inline"><input type="checkbox" id="showPastEvents"> 開催済・中止も表示</label>
+    </div>
+
+    <div class="form-panel" id="eventForm">
+      <h3 id="eventFormTitle">新しいイベントを登録</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="eTitle">タイトル <span class="req">＊必須</span></label>
+          <input id="eTitle" type="text" placeholder="例：夏の個展「いろのゆくえ」">
+        </div>
+        <div class="field">
+          <label for="eKind">種類</label>
+          <select id="eKind">
+            <option>個展</option>
+            <option>ワークショップ</option>
+            <option>レッスン</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="eDate">日付 <span class="req">＊必須</span></label>
+          <input id="eDate" type="date">
+        </div>
+        <div class="field">
+          <label for="eTime">時間</label>
+          <input id="eTime" type="text" placeholder="例：13:00〜15:00">
+        </div>
+        <div class="field">
+          <label for="eVenue">会場</label>
+          <input id="eVenue" type="text" placeholder="例：ギャラリー青">
+        </div>
+        <div class="field">
+          <label for="eCapacity">定員（人）</label>
+          <input id="eCapacity" type="number" min="0" placeholder="例：8">
+        </div>
+        <div class="field">
+          <label for="eFee">参加費（円）</label>
+          <input id="eFee" type="number" min="0" step="100" placeholder="例：4500">
+        </div>
+        <div class="field">
+          <label for="eStatus">状態</label>
+          <select id="eStatus">
+            <option>予定</option>
+            <option>準備中</option>
+            <option>開催済</option>
+            <option>中止</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label for="ePrep">準備物</label>
+          <textarea id="ePrep" placeholder="例：インク一式、パネル10枚、釣り銭、名簿"></textarea>
+        </div>
+        <div class="field wide">
+          <label for="eNote">メモ</label>
+          <textarea id="eNote" placeholder="例：搬入は前日15時から"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="btnSaveEvent">登録する</button>
+        <button class="btn" id="btnCancelEvent">やめる</button>
+      </div>
+    </div>
+
+    <div id="eventList"></div>
+  </section>
+
+  <!-- 参加者・お客さま -->
+  <section class="view" id="view-people">
+    <h2 class="view-title">お客様</h2>
+    <p class="view-lead">参加者やお客さまの連絡先とメモを管理します。イベントへの参加は、イベントカードの「参加者」欄でチェックします。</p>
+
+    <div class="list-controls">
+      <button class="btn primary" id="btnNewPerson">＋ 新しい人を登録</button>
+      <input type="search" id="searchPeople" placeholder="名前で検索">
+      <select id="filterPersonTag">
+        <option value="">区分：すべて</option>
+        <option>参加者</option>
+        <option>お客さま</option>
+        <option>スタッフ・協力者</option>
+        <option>その他</option>
+      </select>
+    </div>
+
+    <div class="form-panel" id="personForm">
+      <h3 id="personFormTitle">新しい人を登録</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="pName">お名前 <span class="req">＊必須</span></label>
+          <input id="pName" type="text" placeholder="例：山田 花子">
+        </div>
+        <div class="field">
+          <label for="pTag">区分</label>
+          <select id="pTag">
+            <option>参加者</option>
+            <option>お客さま</option>
+            <option>スタッフ・協力者</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label for="pContact">連絡先（メール・電話・SNSなど）</label>
+          <input id="pContact" type="text" placeholder="例：hanako@example.com ／ Instagram @hanako">
+        </div>
+        <div class="field wide">
+          <label for="pNote">メモ（好みの色、きっかけ、購入履歴など）</label>
+          <textarea id="pNote" placeholder="例：ブルー系がお好き。6月のワークショップから参加。"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="btnSavePerson">登録する</button>
+        <button class="btn" id="btnCancelPerson">やめる</button>
+      </div>
+    </div>
+
+    <div id="personList"></div>
+  </section>
+  <section class="view" id="view-sales">
+    <h2 class="view-title">売上記録</h2>
+    <p class="view-lead">原画・物販・ワークショップなどの売上を記録します。月ごとの合計と内訳もここで確認できます。</p>
+
+    <div class="list-controls">
+      <button class="btn primary" id="btnNewSale">＋ 売上を記録</button>
+      <select id="filterSaleMonth"></select>
+      <select id="filterSaleKind">
+        <option value="">種類：すべて</option>
+        <option>原画</option>
+        <option>アクセサリー</option>
+        <option>グッズ</option>
+        <option>ワークショップ</option>
+        <option>レッスン</option>
+        <option>その他</option>
+      </select>
+      <input type="search" id="searchSales" placeholder="内容・お相手で検索">
+    </div>
+
+    <div class="form-panel" id="saleForm">
+      <h3 id="saleFormTitle">売上を記録</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="sDate">日付 <span class="req">＊必須</span></label>
+          <input id="sDate" type="date">
+        </div>
+        <div class="field">
+          <label for="sKind">種類</label>
+          <select id="sKind">
+            <option>原画</option>
+            <option>アクセサリー</option>
+            <option>グッズ</option>
+            <option>ワークショップ</option>
+            <option>レッスン</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label for="sWork">登録作品とつなげる（作品が売れたとき）</label>
+          <select id="sWork"></select>
+        </div>
+        <div class="field">
+          <label for="sTitle">内容 <span class="req">＊必須</span></label>
+          <input id="sTitle" type="text" placeholder="例：ゆらぎ No.3 ／ 体験ワークショップ 2名">
+        </div>
+        <div class="field">
+          <label for="sAmount">金額（円） <span class="req">＊必須</span></label>
+          <input id="sAmount" type="number" min="0" step="100" placeholder="例：18000">
+        </div>
+        <div class="field wide">
+          <label for="sBuyer">お相手（購入者・参加者など）</label>
+          <input id="sBuyer" type="text" placeholder="例：山田 花子さん ／ ギャラリー青 経由">
+        </div>
+        <div class="field wide">
+          <label for="sNote">メモ（支払い方法・発送など）</label>
+          <textarea id="sNote" placeholder="例：現金。7/15に発送予定。"></textarea>
+        </div>
+        <div class="field wide" id="markSoldField" style="display:none;">
+          <label class="check-inline"><input type="checkbox" id="sMarkSold" checked> この作品の状態を「販売済」にする</label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="btnSaveSale">記録する</button>
+        <button class="btn" id="btnCancelSale">やめる</button>
+      </div>
+    </div>
+
+    <div class="stat-grid" id="salesSummary"></div>
+    <div class="dash-section" id="salesBreakdownBox" style="display:none;">
+      <h3>種類べつの内訳</h3>
+      <div id="salesBreakdown"></div>
+    </div>
+
+    <div id="saleList"></div>
+  </section>
+
+  <!-- 使い方ガイド -->
+  <section class="view guide" id="view-guide">
+    <h2 class="view-title">使い方</h2>
+    <p class="view-lead">このツールの使い方をまとめています。操作に迷ったときはここを見てください。</p>
+
+    <div class="dash-section">
+      <h3>このツールでできること</h3>
+      <ul>
+        <li><span class="tag">ダッシュボード</span>作品の在庫状況・今後の予定・今月の売上・月別売上グラフをひと目で確認できます。</li>
+        <li><span class="tag">作品・在庫</span>原画やアクセサリーを登録して、いまどこにあるか（在庫・委託中・展示中・売約済・販売済）を管理します。</li>
+        <li><span class="tag">イベント</span>個展・ワークショップ・レッスンの予定と準備物を管理します。参加する人のチェックもここでします。</li>
+        <li><span class="tag">参加者</span>参加者やお客さまの連絡先とメモを管理します。</li>
+        <li><span class="tag">売上</span>売上を記録して、月ごとの合計や種類べつの内訳を確認します。</li>
+      </ul>
+    </div>
+
+    <div class="dash-section">
+      <h3>毎日5分の流れ</h3>
+      <ol>
+        <li><b>開いたら</b> … ダッシュボードの「きょうやること」を見る。終わった作業はチェック（作品が自動で次の段階に進みます）。</li>
+        <li><b>作品ができたら</b> …「＋ 作品を登録」。<b>タイトルだけでOK</b>。詳しいことは「制作」「販売」などのタブで、あとから好きなときに。</li>
+        <li><b>作品が動いたら</b> … 一覧の状態プルダウンをその場で変更（額装が終わったら「きょうやること」でチェックするだけでもOK）。</li>
+        <li><b>売れたら</b> …「売上」タブで「＋ 売上を記録」。作品とつなげると金額が自動で入り、状態も「販売済」になります。</li>
+        <li><b>イベントが決まったら</b> …「イベント」タブで登録。当日は「名簿」ボタンで参加者名簿を印刷。</li>
+      </ol>
+    </div>
+
+    <div class="dash-section">
+      <h3>一覧でできるちょい操作（開かなくてOK）</h3>
+      <ul>
+        <li><b>状態の変更</b> … カードの状態プルダウンをそのまま変更。</li>
+        <li><b>価格の変更</b> … カードの価格をクリック → 入力してEnter。</li>
+        <li><b>お気に入り</b> … ☆をクリックで★に。</li>
+        <li><b>詳細を見る・書き足す</b> … カードのそれ以外の場所をクリックすると編集画面が開きます。</li>
+      </ul>
+    </div>
+
+    <div class="dash-section">
+      <h3>作品の記録を充実させる</h3>
+      <p>編集画面は「基本／制作／販売／リンク／AI」のタブに分かれています。ふだんは「基本」だけで十分です。</p>
+      <ul>
+        <li><b>制作状況</b> … アイデア→制作中→乾燥中→額装待ち→撮影待ち→販売準備→販売中→売約→発送待ち→販売済。額装待ち・撮影待ち・販売準備・発送待ちの作品は「きょうやること」に自動で出てきます。</li>
+        <li><b>作品番号</b> … 登録すると AW-2026-001 のような番号が自動でつきます（変更OK・検索OK）。</li>
+        <li><b>画像</b> … 「基本」タブの「作品の画像」で登録。一覧のサムネイル（小さい写真）をクリックすると大きく見られます。</li>
+        <li><b>タグ</b> …「青、海、癒し」のように読点やカンマで区切って入力。一覧の「タグ」で絞り込めます。</li>
+        <li><b>原価と利益</b> … フォームの「原価と利益」を開いて材料費などを入れると、原価合計と利益を自動計算します。</li>
+        <li><b>制作カルテ</b> … 制作日・制作時間・満足度・使用画材などを記録できます。あとで自分の作品分析に使えます。</li>
+        <li><b>リンク</b> … BASEやホームページ、SNS投稿のURLを保存すると、作品カードからワンクリックで開けます。</li>
+        <li><b>★お気に入り</b> … 作品カードの☆を押すと★に。「★のみ」にチェックするとお気に入りだけ表示できます。</li>
+        <li><b>状態の履歴</b> … 状態（在庫→展示中→販売済など）を変えると日付つきで自動記録。編集画面の「記録」で時系列が見られます。</li>
+        <li><b>AIアシスタント</b> … 編集画面の「AIアシスタント・販売サポート」のボタンを押すと、紹介文やInstagram投稿文の「お願い文」がコピーされます。ChatGPTやClaudeに貼り付けるだけ。</li>
+        <li><b>販売ページ用テキスト</b> … BASE掲載用の下書き（タイトル・サイズ・価格・注意事項）をワンクリックでコピーできます。</li>
+        <li><b>QRコード</b> … 編集画面のリンク欄にURLを入れて「QRコードを表示・印刷」を押すと、BASE・ホームページ・SNSのQRコードが作れます。展示会のキャプションの横に。</li>
+        <li><b>しぼり込み</b> … タグのほかに、制作年・価格帯でも探せます。検索欄はサイズ（F4 など）にも反応します。</li>
+      </ul>
+      <p>詳細な項目はぜんぶ折りたたみの中にあるので、ふだんはタイトルと価格だけでもOK。あとから少しずつ書き足せます。</p>
+    </div>
+
+    <div class="dash-section">
+      <h3>印刷・PDFでの共有</h3>
+      <ul>
+        <li><b>作品リスト</b> …「作品・在庫」タブの「印刷・PDF」ボタン。画面で絞り込んだ内容（例：状態＝委託中だけ）がそのまま一覧表になります。委託先への共有や棚卸しに。</li>
+        <li><b>参加者名簿</b> … イベントカードの「名簿」ボタン。</li>
+        <li>どちらも印刷画面で<b>「PDFとして保存」</b>を選ぶと、ファイルとして保存できます。スタッフさんへのLINEやメール送付に使えます。</li>
+      </ul>
+    </div>
+
+    <div class="dash-section">
+      <h3>データの保存とバックアップ</h3>
+      <p>入力したデータは、<b>このパソコンのブラウザの中</b>に自動で保存されます。保存ボタンを押す必要はありません。</p>
+      <ul>
+        <li>週に1回くらい、右上の<b>「バックアップを保存」</b>を押して、できたファイルを iCloud の「Atelier with 管理ツール」フォルダに入れておくと安心です。作品の画像もバックアップに含まれます（そのぶんファイルは大きくなります）。</li>
+        <li>もしデータが消えてしまったら、<b>「バックアップから復元」</b>で最後に保存したバックアップファイルを選べば戻せます。</li>
+        <li>さらに、<b>1日1回自動で「復元ポイント」</b>（過去14日分・画像はのぞく）も作られています。まちがえて消してしまったときは、右上の「復元ポイント」からその日の状態に戻せます。</li>
+      </ul>
+      <div class="caution">
+        <b>気をつけること</b><br>
+        ・データはこのパソコンの、いつも使っているブラウザに保存されています。<b>別のパソコンやスマホでファイルを開いても、データは表示されません</b>（その場合はバックアップファイルで復元すれば見られます）。<br>
+        ・「削除」した作品や記録は元に戻せません。迷ったら削除せず、メモ欄に書き残しておくのがおすすめです。
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <h3>困ったときは</h3>
+      <ul>
+        <li>表示がおかしいときは、まずページを再読み込み（更新）してみてください。</li>
+        <li>直したいところ・追加したい機能が出てきたら、Claude（クロード）に「AtelierWith運営ノートの○○を直したい」と伝えれば修正できます。</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  お試し中の変更は、このブラウザの中だけに保存されます。実際のデータとはつながっていません。<br>
+  <span id="dataCounts"></span>
+</footer>
+
+<div id="printSheet"></div>
+
+<div id="lightbox" hidden>
+  <img id="lightboxImg" alt="">
+  <div class="cap" id="lightboxCap"></div>
+</div>
+
+<div class="overlay" id="qrDialog" hidden>
+  <div class="panel">
+    <h3 id="qrTitle" style="margin:0 0 10px; font-size:15px;"></h3>
+    <div id="qrBody"></div>
+    <div class="form-actions" style="margin-top:12px;">
+      <button class="btn primary" id="btnQrPrint">印刷・PDF</button>
+      <button class="btn" id="btnQrClose">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="snapDialog" hidden>
+  <div class="panel">
+    <h3 style="margin:0 0 4px; font-size:15px;">復元ポイント</h3>
+    <p style="margin:0 0 12px; font-size:12.5px; color:var(--ink-soft);">
+      1日1回、自動でデータの控えを作っています（過去14日分・画像はのぞく）。まちがえて消してしまったときは、ここから戻せます。
+    </p>
+    <div id="snapList"></div>
+    <div class="form-actions" style="margin-top:12px;">
+      <button class="btn" id="btnSnapClose">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* qrcode-generator v1.4.4 | (c) Kazuhiko Arase | MIT License |
+   https://github.com/kazuhikoarase/qrcode-generator （QRコード生成ライブラリ） */
+/**
+ * Minified by jsDelivr using Terser v5.37.0.
+ * Original file: /npm/qrcode-generator@1.4.4/qrcode.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,(function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1}))},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}((function(){return qrcode}));
+//# sourceMappingURL=/sm/26b4b0d0b1e283d6b3ec9857ac597d7a60c76ac17be1ef4c965f03086de426bb.map
+</script>
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'atelierwith-demo-v1';
+  var data = load();
+  var editingId = null;
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && Array.isArray(d.works)) return normalize(d);
+      }
+    } catch (e) { /* 壊れたデータは初期化する */ }
+    return normalize(makeDemoData());
+  }
+  function dateFromToday(offset) {
+    var d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() + offset);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function makeDemoData() {
+    var now = Date.now();
+    return {
+      works: [
+        {
+          id: 'demo-w1', workNo: 'AW-DEMO-001', title: '海辺の余白', kind: '原画',
+          series: 'アルコールインク', size: 'A3', price: 33000, status: '展示中', prodStatus: '販売中',
+          note: '夏の企画展に出品中（サンプル）', tags: ['青', '海', '癒し'], favorite: true,
+          startDate: dateFromToday(-40), finishDate: dateFromToday(-34), workHours: '約5時間', rating: 5,
+          materials: 'アルコールインク、ユポ紙、ジェルメディウム', colors: 'ロイヤルブルー、ターコイズ、ゴールド',
+          makingNote: '光が抜ける余白を残しながら、青の重なりを調整。',
+          urls: {}, exhibitHistory: '夏の企画展（サンプル展示）', buyer: '', storagePlace: '展示会場',
+          costs: { frame: 4200, paper: 900, ink: 1600, material: 800, packing: 500 },
+          statusHistory: [{ date: dateFromToday(-34), status: '在庫' }, { date: dateFromToday(-7), status: '展示中' }],
+          createdAt: now - 40 * 86400000, updatedAt: now - 2 * 86400000
+        },
+        {
+          id: 'demo-w2', workNo: 'AW-DEMO-002', title: '光のかけら', kind: 'アクセサリー',
+          series: 'アートレジン', size: 'ペンダント 25mm', price: 4800, status: '在庫', prodStatus: '撮影待ち',
+          note: 'オンライン掲載前の撮影待ち', tags: ['青', 'アクセサリー', '一点もの'], favorite: false,
+          startDate: dateFromToday(-10), finishDate: dateFromToday(-4), workHours: '約2時間', rating: 4,
+          materials: 'レジン、アート片、金具', colors: 'ブルー、ホワイト', makingNote: '', urls: {},
+          exhibitHistory: '', buyer: '', storagePlace: '作品棚 A-2', costs: { material: 700, packing: 250 },
+          statusHistory: [{ date: dateFromToday(-4), status: '在庫' }],
+          createdAt: now - 10 * 86400000, updatedAt: now - 1 * 86400000
+        },
+        {
+          id: 'demo-w3', workNo: 'AW-DEMO-003', title: 'やわらかな朝', kind: '原画',
+          series: 'テクスチャアート', size: 'F4', price: 22000, status: '在庫', prodStatus: '額装待ち',
+          note: '額を選んでから撮影予定', tags: ['白', '光', '静けさ'], favorite: true,
+          startDate: dateFromToday(-6), finishDate: dateFromToday(-1), workHours: '2日', rating: 5,
+          materials: 'キャンバス、モデリングペースト', colors: 'ホワイト、アイボリー、淡いゴールド',
+          makingNote: '凹凸を増やしすぎず、光の影が見える程度に。', urls: {}, exhibitHistory: '', buyer: '',
+          storagePlace: '乾燥棚', costs: { frame: 3500, material: 1300 },
+          statusHistory: [{ date: dateFromToday(-1), status: '在庫' }],
+          createdAt: now - 6 * 86400000, updatedAt: now - 6 * 3600000
+        },
+        {
+          id: 'demo-w4', workNo: 'AW-DEMO-004', title: '蒼の記憶', kind: '原画',
+          series: 'アルコールインク', size: 'A4', price: 18000, status: '販売済', prodStatus: '販売済',
+          note: 'オンラインストアで販売（サンプル）', tags: ['蒼', '抽象', 'ギフト'], favorite: false,
+          startDate: dateFromToday(-80), finishDate: dateFromToday(-72), workHours: '約4時間', rating: 4,
+          materials: 'アルコールインク、ユポ紙', colors: 'ネイビー、ブルー', makingNote: '', urls: {},
+          exhibitHistory: '', buyer: 'サンプル購入者A', storagePlace: '', costs: { frame: 3000, paper: 700, ink: 1200, packing: 450, shipping: 850 },
+          statusHistory: [{ date: dateFromToday(-72), status: '在庫' }, { date: dateFromToday(-15), status: '販売済' }],
+          createdAt: now - 80 * 86400000, updatedAt: now - 15 * 86400000
+        }
+      ],
+      people: [
+        { id: 'demo-p1', name: 'さくらさん（サンプル）', tag: 'お客さま', contact: 'Instagram', note: '青系の作品がお好き', createdAt: now - 60 * 86400000 },
+        { id: 'demo-p2', name: 'あおいさん（サンプル）', tag: '参加者', contact: 'メール', note: 'ワークショップ参加予定', createdAt: now - 30 * 86400000 },
+        { id: 'demo-p3', name: 'ギャラリー担当者（サンプル）', tag: 'スタッフ・協力者', contact: '電話', note: '企画展の窓口', createdAt: now - 20 * 86400000 }
+      ],
+      events: [
+        {
+          id: 'demo-e1', title: '夏色のアルコールインク体験', kind: 'ワークショップ', date: dateFromToday(5),
+          time: '13:30〜15:00', venue: 'サンプルアトリエ', capacity: 6, fee: 3500, status: '準備中',
+          prep: 'インク、ユポ紙、手袋、持ち帰り袋', note: '開始30分前に設営',
+          participantIds: ['demo-p1', 'demo-p2'], createdAt: now - 12 * 86400000
+        },
+        {
+          id: 'demo-e2', title: '青と光の小さな展示会', kind: '個展', date: dateFromToday(18),
+          time: '11:00〜18:00', venue: 'ギャラリーサンプル', capacity: null, fee: 0, status: '予定',
+          prep: '作品リスト、キャプション、ショップカード', note: '搬入は前日15時',
+          participantIds: ['demo-p3'], createdAt: now - 8 * 86400000
+        }
+      ],
+      sales: [
+        { id: 'demo-s1', date: dateFromToday(-15), kind: '原画', title: '蒼の記憶', amount: 18000, buyer: 'サンプル購入者A', note: 'オンラインストア', workId: 'demo-w4', createdAt: now - 15 * 86400000 },
+        { id: 'demo-s2', date: dateFromToday(-9), kind: 'ワークショップ', title: 'アート体験 2名分', amount: 7000, buyer: 'サンプル参加者', note: '', workId: null, createdAt: now - 9 * 86400000 },
+        { id: 'demo-s3', date: dateFromToday(-3), kind: 'グッズ', title: 'アートカード 3枚', amount: 2400, buyer: 'サンプル購入者B', note: '展示会場', workId: null, createdAt: now - 3 * 86400000 },
+        { id: 'demo-s4', date: dateFromToday(-36), kind: 'アクセサリー', title: '光のしずく ピアス', amount: 5200, buyer: 'サンプル購入者C', note: '', workId: null, createdAt: now - 36 * 86400000 }
+      ],
+      taskDone: {}
+    };
+  }
+  function normalize(d) {
+    return {
+      works: (Array.isArray(d.works) ? d.works : []).map(function (w) {
+        if (!Array.isArray(w.tags)) w.tags = [];
+        if (!w.costs || typeof w.costs !== 'object') w.costs = {};
+        if (!w.urls || typeof w.urls !== 'object') w.urls = {};
+        return w;
+      }),
+      events: (Array.isArray(d.events) ? d.events : []).map(function (ev) {
+        if (!Array.isArray(ev.participantIds)) ev.participantIds = [];
+        return ev;
+      }),
+      people: Array.isArray(d.people) ? d.people : [],
+      sales: Array.isArray(d.sales) ? d.sales : [],
+      taskDone: (d.taskDone && typeof d.taskDone === 'object') ? d.taskDone : {}
+    };
+  }
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    updateDataCounts();
+  }
+  function updateDataCounts() {
+    var el = document.getElementById('dataCounts');
+    if (!el) return;
+    el.textContent = 'いま保存されているデータ：作品 ' + data.works.length + ' 点 ／ イベント ' +
+      data.events.length + ' 件 ／ 参加者 ' + data.people.length + ' 人 ／ 売上 ' + data.sales.length + ' 件';
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function yen(n) {
+    if (n == null || n === '' || isNaN(n)) return '';
+    return Number(n).toLocaleString('ja-JP') + '円';
+  }
+  function fmtDate(iso) {
+    if (!iso) return '';
+    var p = iso.split('-');
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    var wd = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+    return Number(p[1]) + '月' + Number(p[2]) + '日（' + wd + '）';
+  }
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- 作品画像の保存（IndexedDB） ----------
+     画像はlocalStorage（5MB制限）ではなくIndexedDBに保存する。
+     レコード形式: { id: 作品id, full: 大きい画像dataURL, thumb: サムネイルdataURL } */
+  var idbConn = null;
+  var thumbCache = new Map();
+
+  function idbOpen() {
+    return new Promise(function (resolve, reject) {
+      if (idbConn) return resolve(idbConn);
+      var req = indexedDB.open('atelierwith-demo-images', 2);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains('images')) db.createObjectStore('images', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('snapshots')) db.createObjectStore('snapshots', { keyPath: 'id' });
+      };
+      req.onsuccess = function () { idbConn = req.result; resolve(idbConn); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+  function idbTx(store, mode, fn) {
+    return idbOpen().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(store, mode);
+        var out = fn(tx.objectStore(store));
+        tx.oncomplete = function () { resolve(out && out.result); };
+        tx.onerror = function () { reject(tx.error); };
+      });
+    });
+  }
+  function idbPut(rec) { return idbTx('images', 'readwrite', function (s) { s.put(rec); }); }
+  function idbDelete(id) { return idbTx('images', 'readwrite', function (s) { s.delete(id); }); }
+  function idbClear() { return idbTx('images', 'readwrite', function (s) { s.clear(); }); }
+  function idbGet(id) { return idbTx('images', 'readonly', function (s) { return s.get(id); }); }
+  function idbAll() { return idbTx('images', 'readonly', function (s) { return s.getAll(); }); }
+  function snapPut(rec) { return idbTx('snapshots', 'readwrite', function (s) { s.put(rec); }); }
+  function snapDelete(id) { return idbTx('snapshots', 'readwrite', function (s) { s.delete(id); }); }
+  function snapClear() { return idbTx('snapshots', 'readwrite', function (s) { s.clear(); }); }
+  function snapAll() { return idbTx('snapshots', 'readonly', function (s) { return s.getAll(); }); }
+
+  /* 画像ファイルを縮小してdataURLにする（full: 長辺1400px / thumb: 長辺240px） */
+  function scaleImage(img, max, quality) {
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var scale = Math.min(1, max / Math.max(w, h));
+    var cw = Math.max(1, Math.round(w * scale));
+    var ch = Math.max(1, Math.round(h * scale));
+    var canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(img, 0, 0, cw, ch);
+    return canvas.toDataURL('image/jpeg', quality);
+  }
+  function processImageFile(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var full = scaleImage(img, 1400, 0.85);
+          var thumb = scaleImage(img, 240, 0.8);
+          URL.revokeObjectURL(url);
+          resolve({ full: full, thumb: thumb });
+        } catch (e) {
+          URL.revokeObjectURL(url);
+          reject(e);
+        }
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('image load error'));
+      };
+      img.src = url;
+    });
+  }
+
+  /* コンテナ内の <img data-thumb="作品id"> にサムネイルを流し込む */
+  function loadThumbs(box) {
+    box.querySelectorAll('img[data-thumb]').forEach(function (img) {
+      var id = img.dataset.thumb;
+      if (thumbCache.has(id)) {
+        img.src = thumbCache.get(id);
+        return;
+      }
+      idbGet(id).then(function (rec) {
+        if (rec && rec.thumb) {
+          thumbCache.set(id, rec.thumb);
+          img.src = rec.thumb;
+        }
+      });
+    });
+  }
+
+  /* ---------- 画像の拡大表示 ---------- */
+  var lightbox = document.getElementById('lightbox');
+  function openLightbox(work) {
+    idbGet(work.id).then(function (rec) {
+      if (!rec || !rec.full) return;
+      document.getElementById('lightboxImg').src = rec.full;
+      document.getElementById('lightboxCap').textContent = work.title || '';
+      lightbox.hidden = false;
+    });
+  }
+  lightbox.addEventListener('click', function () {
+    lightbox.hidden = true;
+    document.getElementById('lightboxImg').src = '';
+  });
+
+  /* ---------- 復元ポイント（1日1回の自動バックアップ・データのみ） ---------- */
+  function makeSnapshot() {
+    return snapPut({
+      id: new Date().toISOString(),
+      date: todayISO(),
+      counts: {
+        works: data.works.length,
+        events: data.events.length,
+        people: data.people.length,
+        sales: data.sales.length
+      },
+      json: JSON.stringify(data)
+    });
+  }
+  function dailySnapshot() {
+    snapAll().then(function (list) {
+      list = list || [];
+      var hasToday = list.some(function (s) { return s.date === todayISO(); });
+      var op = hasToday ? Promise.resolve() : makeSnapshot();
+      return op.then(snapAll).then(function (l) {
+        l = (l || []).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+        while (l.length > 14) snapDelete(l.shift().id);
+      });
+    }).catch(function () { /* 復元ポイントが作れなくても本体はそのまま動かす */ });
+  }
+
+  var snapDialog = document.getElementById('snapDialog');
+  var lastSnapList = [];
+  document.getElementById('btnSnapshots').addEventListener('click', function () {
+    snapAll().then(function (list) {
+      lastSnapList = (list || []).sort(function (a, b) { return a.id < b.id ? 1 : -1; });
+      var box = document.getElementById('snapList');
+      if (lastSnapList.length === 0) {
+        box.innerHTML = '<div class="dash-empty">まだ復元ポイントがありません（1日1回、自動で作られます）。</div>';
+      } else {
+        box.innerHTML = lastSnapList.map(function (s) {
+          var c = s.counts || {};
+          return '<div class="snap-row" data-id="' + esc(s.id) + '">' +
+            '<span class="num">' + esc(fmtDateFull(s.date)) + '</span>' +
+            '<span class="meta">作品 ' + (c.works || 0) + '点 ／ イベント ' + (c.events || 0) +
+            '件 ／ 参加者 ' + (c.people || 0) + '人 ／ 売上 ' + (c.sales || 0) + '件</span>' +
+            '<button class="btn small act-restore">この日に戻す</button>' +
+            '</div>';
+        }).join('');
+      }
+      snapDialog.hidden = false;
+    });
+  });
+  document.getElementById('btnSnapClose').addEventListener('click', function () { snapDialog.hidden = true; });
+  snapDialog.addEventListener('click', function (e) {
+    if (e.target === snapDialog) snapDialog.hidden = true;
+    if (!e.target.classList.contains('act-restore')) return;
+    var row = e.target.closest('.snap-row');
+    var rec = lastSnapList.find(function (s) { return s.id === row.dataset.id; });
+    if (!rec) return;
+    if (!confirm(fmtDateFull(rec.date) + ' の状態にデータを戻しますか？\n' +
+      'いまのデータも復元ポイントとして残るので、あとで戻り直せます。\n※作品の画像はそのままです。')) return;
+    makeSnapshot().then(function () {
+      data = normalize(JSON.parse(rec.json));
+      save();
+      renderWorks();
+      renderEvents();
+      renderPeople();
+      renderSales();
+      renderDashboard();
+      snapDialog.hidden = true;
+      toast(fmtDateFull(rec.date) + ' の状態に戻しました');
+    }).catch(function () {
+      toast('復元に失敗しました');
+    });
+  });
+
+  /* ---------- タブ切り替え ---------- */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+      document.getElementById('view-' + tab.dataset.view).classList.add('active');
+      if (tab.dataset.view === 'dashboard') renderDashboard();
+      if (tab.dataset.view === 'events') renderEvents();
+      if (tab.dataset.view === 'people') renderPeople();
+      if (tab.dataset.view === 'sales') renderSales();
+    });
+  });
+
+  function openDemoView(view) {
+    var tab = document.querySelector('.tab[data-view="' + view + '"]');
+    if (!tab) return;
+    tab.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('[data-demo-view]').forEach(function (btn) {
+    btn.addEventListener('click', function () { openDemoView(btn.dataset.demoView); });
+  });
+
+  function resetDemo() {
+    if (!confirm('お試し中の変更を消して、最初のサンプル状態に戻しますか？')) return;
+    data = normalize(makeDemoData());
+    save();
+    Promise.all([idbClear(), snapClear()]).then(function () {
+      thumbCache.clear();
+      renderWorks();
+      renderEvents();
+      renderPeople();
+      renderSales();
+      renderDashboard();
+      openDemoView('dashboard');
+      dailySnapshot();
+      toast('サンプルを最初の状態に戻しました');
+    }).catch(function () {
+      renderWorks();
+      renderEvents();
+      renderPeople();
+      renderSales();
+      renderDashboard();
+      openDemoView('dashboard');
+      toast('サンプルを最初の状態に戻しました');
+    });
+  }
+  document.getElementById('btnResetDemo').addEventListener('click', resetDemo);
+  document.getElementById('btnResetDemoTop').addEventListener('click', resetDemo);
+
+  /* ---------- ダッシュボード ---------- */
+  function renderDashboard() {
+    renderTodayTasks();
+
+    var upcoming = data.events.filter(function (ev) {
+      return ev.date >= todayISO() && (ev.status === '予定' || ev.status === '準備中');
+    }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    var thisMonth = todayISO().slice(0, 7);
+    var monthTotal = 0, monthSalesCount = 0;
+    data.sales.forEach(function (s) {
+      if (s.date && s.date.slice(0, 7) === thisMonth) {
+        monthTotal += Number(s.amount) || 0;
+        monthSalesCount++;
+      }
+    });
+    var making = 0, selling = 0, shipping = 0, stock = 0, madeThisMonth = 0;
+    data.works.forEach(function (w) {
+      if (w.prodStatus === '制作中' || w.prodStatus === '乾燥中') making++;
+      if (w.prodStatus === '販売中') selling++;
+      if (w.prodStatus === '発送待ち') shipping++;
+      if (w.status === '在庫') stock++;
+      if (w.finishDate && w.finishDate.slice(0, 7) === thisMonth) madeThisMonth++;
+    });
+    var stats = [
+      { label: '制作中', value: making },
+      { label: '販売中', value: selling },
+      { label: '発送待ち', value: shipping },
+      { label: '在庫', value: stock },
+      { label: '今月の制作', value: madeThisMonth },
+      { label: '今月の販売', value: monthSalesCount, unit: '件' },
+      { label: '今月の売上', value: monthTotal.toLocaleString('ja-JP'), unit: '円' },
+      { label: '展示・イベント予定', value: upcoming.length, unit: '件' }
+    ];
+    document.getElementById('dashStats').innerHTML = stats.map(function (s) {
+      return '<div class="stat-card"><div class="label">' + s.label +
+             '</div><div class="value num">' + s.value + '<span class="unit">' + (s.unit || '点') + '</span></div></div>';
+    }).join('');
+
+    var recent = data.works.slice().sort(function (a, b) {
+      return (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
+    }).slice(0, 5);
+    var box = document.getElementById('dashRecent');
+    if (recent.length === 0) {
+      box.innerHTML = '<div class="dash-empty">まだ作品が登録されていません。「作品・在庫」タブから最初の1点を登録してみましょう。</div>';
+    } else {
+      box.innerHTML = recent.map(function (w) {
+        return '<div class="work-card" style="box-shadow:none;margin-bottom:8px;">' +
+          (w.hasImage
+            ? '<span class="thumb-box sm"><img data-thumb="' + esc(w.id) + '" alt=""></span>'
+            : '') +
+          '<span class="title">' + esc(w.title) + '</span>' +
+          '<span class="pill kind">' + esc(w.kind) + '</span>' +
+          '<span class="pill st-' + esc(w.status) + '">' + esc(w.status) + '</span>' +
+          '<span class="price num">' + yen(w.price) + '</span>' +
+          '</div>';
+      }).join('');
+      loadThumbs(box);
+    }
+
+    var evBox = document.getElementById('dashEvents');
+    if (upcoming.length === 0) {
+      evBox.innerHTML = '<div class="dash-empty">これからの予定はまだありません。「イベント」タブから登録できます。</div>';
+    } else {
+      evBox.innerHTML = upcoming.slice(0, 5).map(function (ev) {
+        var cap = '（参加 ' + ev.participantIds.length + (ev.capacity ? '/' + ev.capacity : '') + '人）';
+        return '<div class="work-card" style="box-shadow:none;margin-bottom:8px;">' +
+          '<span class="event-date num">' + fmtDate(ev.date) + '</span>' +
+          '<span class="title">' + esc(ev.title) + '</span>' +
+          '<span class="pill kind">' + esc(ev.kind) + '</span>' +
+          '<span class="pill st-' + esc(ev.status) + '">' + esc(ev.status) + '</span>' +
+          '<span class="meta">' + (ev.venue ? esc(ev.venue) : '') + cap + '</span>' +
+          '</div>';
+      }).join('');
+    }
+
+    renderDashSales();
+  }
+
+  /* ---------- きょうやること ----------
+     制作状況（額装待ちなど）とイベント予定から自動でつくる。
+     チェックすると、その作品は次の段階へ自動で進む。 */
+  var PROD_TASK = {
+    '額装待ち': { label: '額装する', next: '撮影待ち' },
+    '撮影待ち': { label: '撮影する', next: '販売準備' },
+    '販売準備': { label: 'BASE登録・SNS投稿の準備', next: '販売中' },
+    '発送待ち': { label: '発送する', next: '販売済' }
+  };
+  function renderTodayTasks() {
+    var box = document.getElementById('todayTasks');
+    var items = [];
+    data.works.forEach(function (w) {
+      var t = PROD_TASK[w.prodStatus];
+      if (t) {
+        items.push('<label class="task-line"><input type="checkbox" class="task-check" data-type="work" data-id="' +
+          esc(w.id) + '"> ' + esc(t.label) + '：「' + esc(w.title) + '」</label>');
+      }
+    });
+    var today = todayISO();
+    var week = new Date();
+    week.setDate(week.getDate() + 7);
+    var weekISO = week.getFullYear() + '-' + ('0' + (week.getMonth() + 1)).slice(-2) + '-' + ('0' + week.getDate()).slice(-2);
+    data.events.forEach(function (ev) {
+      if ((ev.status === '予定' || ev.status === '準備中') && ev.date >= today && ev.date <= weekISO) {
+        var key = 'ev-' + ev.id;
+        if (!data.taskDone[key]) {
+          items.push('<label class="task-line"><input type="checkbox" class="task-check" data-type="event" data-key="' +
+            esc(key) + '"> 展示・イベントの準備：「' + esc(ev.title) + '」（' + esc(fmtDate(ev.date)) + '）</label>');
+        }
+      }
+    });
+    box.innerHTML = items.length
+      ? items.join('')
+      : '<div class="dash-empty">きょう追いかける作業はありません。制作を楽しんでください。</div>';
+  }
+
+  document.getElementById('todayTasks').addEventListener('change', function (e) {
+    if (!e.target.classList.contains('task-check')) return;
+    var target = e.target;
+    if (target.dataset.type === 'work') {
+      var w = data.works.find(function (x) { return x.id === target.dataset.id; });
+      if (!w) return;
+      var t = PROD_TASK[w.prodStatus];
+      if (!t) return;
+      w.prodStatus = t.next;
+      if (t.next === '販売済' && w.status !== '販売済') {
+        w.status = '販売済';
+        pushStatusHistory(w, '販売済');
+      }
+      w.updatedAt = Date.now();
+      save();
+      toast('「' + w.title + '」を「' + t.next + '」にしました');
+    } else {
+      data.taskDone[target.dataset.key] = todayISO();
+      save();
+      toast('おつかれさま！チェックしました');
+    }
+    /* チェックが見えてから消えるよう、少しだけ間をおいて更新する */
+    setTimeout(function () {
+      renderDashboard();
+      renderWorks();
+    }, 350);
+  });
+
+  /* ---------- 売上のようす（グラフ） ---------- */
+  function barRows(rows, valueFn) {
+    var max = 1;
+    rows.forEach(function (r) { if (r.value > max) max = r.value; });
+    return rows.map(function (r) {
+      var pct = Math.round(r.value / max * 100);
+      return '<div class="bar-row">' +
+        '<span class="bar-label num">' + esc(r.label) + '</span>' +
+        '<span class="bar-track"><span class="bar' + (r.value === 0 ? ' zero' : '') + '" style="width:' + pct + '%"></span></span>' +
+        '<span class="bar-val num">' + valueFn(r.value) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderDashSales() {
+    var box = document.getElementById('dashSales');
+    if (data.sales.length === 0) {
+      box.innerHTML = '<div class="dash-empty">売上を記録すると、月別のグラフや内訳がここに表示されます。</div>';
+      return;
+    }
+    var now = new Date();
+    var thisYear = String(now.getFullYear());
+    var months = [];
+    var byKey = {};
+    for (var i = 11; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var key = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+      var row = { label: d.getFullYear() + '年' + (d.getMonth() + 1) + '月', value: 0 };
+      months.push(row);
+      byKey[key] = row;
+    }
+    var yearTotal = 0, yearCount = 0, yearProfit = 0;
+    var byKind = {};
+    var bySeries = {};
+    data.sales.forEach(function (s) {
+      if (!s.date) return;
+      var amount = Number(s.amount) || 0;
+      var mk = s.date.slice(0, 7);
+      if (byKey[mk]) byKey[mk].value += amount;
+      var w = s.workId ? data.works.find(function (x) { return x.id === s.workId; }) : null;
+      if (s.date.slice(0, 4) === thisYear) {
+        yearTotal += amount;
+        yearCount++;
+        yearProfit += amount - (w ? workCostTotal(w) : 0);
+        byKind[s.kind] = (byKind[s.kind] || 0) + amount;
+      }
+      if (w && w.series) bySeries[w.series] = (bySeries[w.series] || 0) + 1;
+    });
+    var kindRows = Object.keys(byKind).map(function (k) {
+      return { label: k, value: byKind[k] };
+    }).sort(function (a, b) { return b.value - a.value; });
+    var seriesRows = Object.keys(bySeries).map(function (k) {
+      return { label: k, value: bySeries[k] };
+    }).sort(function (a, b) { return b.value - a.value; }).slice(0, 5);
+
+    var html =
+      '<p class="year-line">今年（' + thisYear + '年）の売上合計 <b class="num">' + yen(yearTotal) + '</b>　販売 <b class="num">' + yearCount + '</b> 件' +
+      '　利益（概算） <b class="num">' + yen(yearProfit) + '</b></p>' +
+      '<h4>月別売上（直近12ヶ月）</h4>' +
+      barRows(months, yen) +
+      '<div class="chart-cols">' +
+        '<div><h4>種類べつ（今年）</h4>' +
+          (kindRows.length ? barRows(kindRows, yen) : '<div class="dash-empty">今年の売上はまだありません。</div>') +
+        '</div>' +
+        '<div><h4>人気シリーズ（販売数）</h4>' +
+          (seriesRows.length
+            ? barRows(seriesRows, function (v) { return v + ' 点'; })
+            : '<div class="dash-empty">作品とつなげた売上ができると表示されます。</div>') +
+        '</div>' +
+      '</div>';
+    box.innerHTML = html;
+  }
+
+  /* ---------- 作品フォーム ---------- */
+  var formPanel = document.getElementById('workForm');
+  var fields = {
+    title: document.getElementById('wTitle'),
+    kind: document.getElementById('wKind'),
+    series: document.getElementById('wSeries'),
+    size: document.getElementById('wSize'),
+    price: document.getElementById('wPrice'),
+    status: document.getElementById('wStatus'),
+    note: document.getElementById('wNote'),
+    tags: document.getElementById('wTags'),
+    start: document.getElementById('wStart'),
+    finish: document.getElementById('wFinish'),
+    hours: document.getElementById('wHours'),
+    rating: document.getElementById('wRating'),
+    materials: document.getElementById('wMaterials'),
+    colors: document.getElementById('wColors'),
+    makingNote: document.getElementById('wMakingNote'),
+    urlBase: document.getElementById('wUrlBase'),
+    urlHp: document.getElementById('wUrlHp'),
+    urlSns: document.getElementById('wUrlSns'),
+    urlVideo: document.getElementById('wUrlVideo'),
+    exhibit: document.getElementById('wExhibit'),
+    buyer: document.getElementById('wBuyer'),
+    storage: document.getElementById('wStorage'),
+    no: document.getElementById('wNo'),
+    prod: document.getElementById('wProd')
+  };
+
+  /* 編集画面のタブ切り替え（基本／制作／販売／リンク／AI） */
+  var formTabs = formPanel.querySelectorAll('.ftab');
+  function setFormPane(name) {
+    formTabs.forEach(function (t) { t.classList.toggle('active', t.dataset.pane === name); });
+    formPanel.querySelectorAll('.fpane').forEach(function (p) { p.classList.toggle('active', p.dataset.pane === name); });
+  }
+  formTabs.forEach(function (t) {
+    t.addEventListener('click', function () { setFormPane(t.dataset.pane); });
+  });
+
+  /* 作品番号の自動採番（AW-年-連番） */
+  function nextWorkNo() {
+    var year = new Date().getFullYear();
+    var max = 0;
+    data.works.forEach(function (w) {
+      var m = /^AW-(\d{4})-(\d+)$/.exec(w.workNo || '');
+      if (m && Number(m[1]) === year) max = Math.max(max, Number(m[2]));
+    });
+    return 'AW-' + year + '-' + ('00' + (max + 1)).slice(-3);
+  }
+  var costFields = {
+    frame: document.getElementById('wCostFrame'),
+    paper: document.getElementById('wCostPaper'),
+    ink: document.getElementById('wCostInk'),
+    material: document.getElementById('wCostMaterial'),
+    packing: document.getElementById('wCostPacking'),
+    shipping: document.getElementById('wCostShipping'),
+    other: document.getElementById('wCostOther')
+  };
+  var COST_KEYS = Object.keys(costFields);
+
+  /* pendingImage: null=変更なし / 'delete'=画像を外す / {full,thumb}=新しい画像 */
+  var pendingImage = null;
+  var imagePreview = document.getElementById('wImagePreview');
+  var imagePreviewImg = document.getElementById('wImagePreviewImg');
+
+  function workCostTotal(w) {
+    var total = 0;
+    COST_KEYS.forEach(function (k) {
+      var v = w.costs ? Number(w.costs[k]) : NaN;
+      if (!isNaN(v)) total += v;
+    });
+    return total;
+  }
+
+  function updateCostView() {
+    var total = 0;
+    COST_KEYS.forEach(function (k) {
+      var v = costFields[k].value.trim();
+      if (v !== '' && !isNaN(Number(v))) total += Number(v);
+    });
+    var priceRaw = fields.price.value.trim();
+    var html = '原価合計 <b class="num">' + total.toLocaleString('ja-JP') + '円</b>';
+    if (priceRaw !== '' && !isNaN(Number(priceRaw))) {
+      var profit = Number(priceRaw) - total;
+      html += '　→　販売価格 <span class="num">' + Number(priceRaw).toLocaleString('ja-JP') + '円</span>' +
+        '　利益 <span class="num ' + (profit >= 0 ? 'plus' : 'minus') + '">' +
+        profit.toLocaleString('ja-JP') + '円</span>';
+    }
+    document.getElementById('costView').innerHTML = html;
+  }
+  COST_KEYS.forEach(function (k) { costFields[k].addEventListener('input', updateCostView); });
+  fields.price.addEventListener('input', updateCostView);
+
+  function showImagePreview(thumb) {
+    if (thumb) {
+      imagePreviewImg.src = thumb;
+      imagePreview.style.display = 'flex';
+    } else {
+      imagePreviewImg.src = '';
+      imagePreview.style.display = 'none';
+    }
+  }
+
+  document.getElementById('wImage').addEventListener('change', function () {
+    var file = this.files[0];
+    this.value = '';
+    if (!file) return;
+    processImageFile(file).then(function (res) {
+      pendingImage = res;
+      showImagePreview(res.thumb);
+      toast('画像を読み込みました（登録すると保存されます）');
+    }).catch(function () {
+      toast('この画像は読み込めませんでした');
+    });
+  });
+  document.getElementById('btnRemoveImage').addEventListener('click', function () {
+    pendingImage = 'delete';
+    showImagePreview(null);
+  });
+
+  function openForm(work) {
+    editingId = work ? work.id : null;
+    pendingImage = null;
+    document.getElementById('workFormTitle').textContent = work ? '作品を編集' : '新しい作品を登録';
+    document.getElementById('btnSaveWork').textContent = work ? '更新する' : '登録する';
+    fields.title.value = work ? work.title : '';
+    fields.kind.value = work ? work.kind : '原画';
+    fields.series.value = work ? (work.series || '') : '';
+    fields.size.value = work ? (work.size || '') : '';
+    fields.price.value = work && work.price != null ? work.price : '';
+    fields.status.value = work ? work.status : '在庫';
+    fields.note.value = work ? (work.note || '') : '';
+    fields.tags.value = work && work.tags ? work.tags.join('、') : '';
+    fields.start.value = work ? (work.startDate || '') : '';
+    fields.finish.value = work ? (work.finishDate || '') : '';
+    fields.hours.value = work ? (work.workHours || '') : '';
+    fields.rating.value = work && work.rating ? String(work.rating) : '';
+    fields.materials.value = work ? (work.materials || '') : '';
+    fields.colors.value = work ? (work.colors || '') : '';
+    fields.makingNote.value = work ? (work.makingNote || '') : '';
+    var urls = (work && work.urls) || {};
+    fields.urlBase.value = urls.base || '';
+    fields.urlHp.value = urls.hp || '';
+    fields.urlSns.value = urls.sns || '';
+    fields.urlVideo.value = urls.video || '';
+    fields.exhibit.value = work ? (work.exhibitHistory || '') : '';
+    fields.buyer.value = work ? (work.buyer || '') : '';
+    fields.storage.value = work ? (work.storagePlace || '') : '';
+    fields.no.value = work ? (work.workNo || '') : '';
+    fields.prod.value = work ? (work.prodStatus || '') : '';
+    document.getElementById('btnDeleteWork').style.display = work ? '' : 'none';
+    var costs = (work && work.costs) || {};
+    COST_KEYS.forEach(function (k) {
+      costFields[k].value = costs[k] != null ? costs[k] : '';
+    });
+    updateCostView();
+    if (work && work.hasImage) {
+      showImagePreview(thumbCache.get(work.id) || null);
+      if (!thumbCache.has(work.id)) {
+        idbGet(work.id).then(function (rec) {
+          if (rec && rec.thumb && editingId === work.id && pendingImage === null) {
+            thumbCache.set(work.id, rec.thumb);
+            showImagePreview(rec.thumb);
+          }
+        });
+      }
+    } else {
+      showImagePreview(null);
+    }
+    renderStatusHistory(work);
+    setFormPane('basic');
+    formPanel.classList.add('open');
+    fields.title.focus();
+  }
+
+  /* 状態の履歴をタイムライン表示する（編集画面の「記録」内） */
+  function renderStatusHistory(work) {
+    var box = document.getElementById('statusHistoryView');
+    var hist = (work && Array.isArray(work.statusHistory)) ? work.statusHistory : [];
+    if (hist.length === 0) {
+      box.innerHTML = '<span class="hist-empty">まだ履歴がありません。状態を変えて保存すると、ここに自動で残ります。</span>';
+      return;
+    }
+    box.innerHTML = hist.map(function (h) {
+      return '<div class="hist-line"><span class="num">' + esc(fmtDateFull(h.date)) + '</span>　' +
+        '<span class="pill st-' + esc(h.status) + '">' + esc(h.status) + '</span></div>';
+    }).join('');
+  }
+
+  function pushStatusHistory(work, status, date) {
+    if (!Array.isArray(work.statusHistory)) work.statusHistory = [];
+    work.statusHistory.push({ date: date || todayISO(), status: status });
+  }
+  function closeForm() {
+    formPanel.classList.remove('open');
+    editingId = null;
+    pendingImage = null;
+  }
+
+  document.getElementById('btnNewWork').addEventListener('click', function () { openForm(null); });
+  document.getElementById('btnCancelWork').addEventListener('click', closeForm);
+
+  document.getElementById('btnDeleteWork').addEventListener('click', function () {
+    if (!editingId) return;
+    var w = data.works.find(function (x) { return x.id === editingId; });
+    if (!w) return;
+    if (!confirm('「' + w.title + '」を削除しますか？\nこの操作は元に戻せません。')) return;
+    data.works = data.works.filter(function (x) { return x.id !== w.id; });
+    if (w.hasImage) {
+      thumbCache.delete(w.id);
+      idbDelete(w.id);
+    }
+    save();
+    closeForm();
+    renderWorks();
+    renderDashboard();
+    toast('削除しました');
+  });
+
+  function parseTags(text) {
+    var seen = {};
+    return text.split(/[,、\s]+/).map(function (t) { return t.trim(); }).filter(function (t) {
+      if (!t || seen[t]) return false;
+      seen[t] = true;
+      return true;
+    });
+  }
+
+  document.getElementById('btnSaveWork').addEventListener('click', function () {
+    var title = fields.title.value.trim();
+    if (!title) {
+      toast('タイトルを入力してください');
+      fields.title.focus();
+      return;
+    }
+    var priceRaw = fields.price.value.trim();
+    var costs = {};
+    COST_KEYS.forEach(function (k) {
+      var v = costFields[k].value.trim();
+      if (v !== '' && !isNaN(Number(v))) costs[k] = Number(v);
+    });
+    var entry = {
+      title: title,
+      kind: fields.kind.value,
+      series: fields.series.value.trim(),
+      size: fields.size.value.trim(),
+      price: priceRaw === '' ? null : Number(priceRaw),
+      status: fields.status.value,
+      note: fields.note.value.trim(),
+      tags: parseTags(fields.tags.value),
+      startDate: fields.start.value || null,
+      finishDate: fields.finish.value || null,
+      workHours: fields.hours.value.trim(),
+      rating: fields.rating.value ? Number(fields.rating.value) : null,
+      materials: fields.materials.value.trim(),
+      colors: fields.colors.value.trim(),
+      makingNote: fields.makingNote.value.trim(),
+      urls: {
+        base: fields.urlBase.value.trim(),
+        hp: fields.urlHp.value.trim(),
+        sns: fields.urlSns.value.trim(),
+        video: fields.urlVideo.value.trim()
+      },
+      exhibitHistory: fields.exhibit.value.trim(),
+      buyer: fields.buyer.value.trim(),
+      storagePlace: fields.storage.value.trim(),
+      workNo: fields.no.value.trim(),
+      prodStatus: fields.prod.value || null,
+      costs: costs,
+      updatedAt: Date.now()
+    };
+    var target;
+    if (editingId) {
+      target = data.works.find(function (x) { return x.id === editingId; });
+      if (target) {
+        var oldStatus = target.status;
+        Object.assign(target, entry);
+        if (oldStatus !== entry.status) pushStatusHistory(target, entry.status);
+      }
+      toast('「' + title + '」を更新しました');
+    } else {
+      entry.id = 'w' + Date.now() + Math.random().toString(36).slice(2, 6);
+      entry.createdAt = Date.now();
+      if (!entry.workNo) entry.workNo = nextWorkNo();
+      data.works.push(entry);
+      target = entry;
+      pushStatusHistory(target, entry.status);
+      toast('「' + title + '」（' + entry.workNo + '）を登録しました');
+    }
+    if (target) {
+      if (pendingImage === 'delete') {
+        target.hasImage = false;
+        thumbCache.delete(target.id);
+        idbDelete(target.id);
+      } else if (pendingImage && typeof pendingImage === 'object') {
+        target.hasImage = true;
+        thumbCache.set(target.id, pendingImage.thumb);
+        idbPut({ id: target.id, full: pendingImage.full, thumb: pendingImage.thumb });
+      }
+    }
+    save();
+    closeForm();
+    renderWorks();
+    renderDashboard();
+  });
+
+  /* ---------- AIアシスタント・販売サポート ----------
+     API連携はせず、入力中の作品情報から「お願い文」を組み立ててコピーするだけ。
+     ChatGPTやClaudeに貼り付けて使う。 */
+  function copyText(text, doneMsg) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        toast(doneMsg);
+      } catch (e) {
+        toast('コピーできませんでした');
+      }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast(doneMsg); }, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  /* いまフォームに入力されている内容から作品情報ブロックをつくる */
+  function currentWorkInfo() {
+    var lines = [];
+    function add(label, v) { if (v) lines.push(label + '：' + v); }
+    add('タイトル', fields.title.value.trim());
+    add('種類', fields.kind.value);
+    add('シリーズ・技法', fields.series.value.trim());
+    add('サイズ', fields.size.value.trim());
+    var p = fields.price.value.trim();
+    if (p !== '' && !isNaN(Number(p))) lines.push('価格：' + Number(p).toLocaleString('ja-JP') + '円');
+    add('タグ・キーワード', parseTags(fields.tags.value).join('、'));
+    add('使用画材', fields.materials.value.trim());
+    add('使用色', fields.colors.value.trim());
+    add('制作時のメモ', fields.makingNote.value.trim());
+    add('メモ', fields.note.value.trim());
+    lines.push('作家・ブランド：Atelier with（アルコールインクアートとテクスチャーアートのアトリエ）');
+    return '【作品情報】\n' + lines.join('\n');
+  }
+
+  var AI_PROMPTS = {
+    btnAiTitle: 'あなたはアート作品のタイトルづけが得意なコピーライターです。以下の作品に合うタイトル案を10個提案してください。短く詩的な日本語を中心に、ひらがな・漢字・カタカナなど雰囲気の違う案も混ぜてください。\n\n',
+    btnAiIntro: '以下のアート作品の紹介文を3案つくってください。ホームページやギャラリーのキャプションに使える、やわらかく上品なトーンで、それぞれ150〜250字くらいでお願いします。\n\n',
+    btnAiInsta: '以下のアート作品のInstagram投稿文を3案つくってください。親しみやすい語り口で、絵文字はひかえめに。各案の最後に、作品に合うハッシュタグを10個つけてください。\n\n',
+    btnAiBase: '以下のアート作品をネットショップ（BASE）に掲載します。商品説明文をつくってください。「作品の魅力」「サイズ・素材・仕様」「飾り方の提案」「購入時の注意（一点もの・画面による色味の違い・発送）」の順で、丁寧で安心感のある文章にしてください。\n\n',
+    btnAiTags: '以下のアート作品のInstagram用ハッシュタグを20個提案してください。日本語と英語を混ぜて、よく使われる人気タグと、作品の個性に合うニッチなタグをバランスよく入れてください。\n\n'
+  };
+  Object.keys(AI_PROMPTS).forEach(function (btnId) {
+    document.getElementById(btnId).addEventListener('click', function () {
+      copyText(AI_PROMPTS[btnId] + currentWorkInfo(),
+        'お願い文をコピーしました。ChatGPTやClaudeに貼り付けてください');
+    });
+  });
+
+  document.getElementById('btnSellCopy').addEventListener('click', function () {
+    var t = [];
+    t.push('【タイトル】' + (fields.title.value.trim() || '（未入力）'));
+    if (fields.series.value.trim()) t.push('【技法】' + fields.series.value.trim());
+    if (fields.size.value.trim()) t.push('【サイズ】' + fields.size.value.trim());
+    var p = fields.price.value.trim();
+    if (p !== '' && !isNaN(Number(p))) t.push('【価格】' + Number(p).toLocaleString('ja-JP') + '円');
+    t.push('');
+    t.push('【紹介文】');
+    t.push(fields.makingNote.value.trim() || fields.note.value.trim() || '（ここに紹介文を書いてください）');
+    t.push('');
+    t.push('【注意事項】');
+    t.push('・一点ものの原画です。同じものは二つとありません。');
+    t.push('・お使いの画面によって、実物と色味が少し異なって見える場合があります。');
+    t.push('・ていねいに梱包してお送りします。');
+    copyText(t.join('\n'), '販売ページ用のテキストをコピーしました');
+  });
+
+  /* ---------- QRコード（展示会用） ---------- */
+  var qrDialog = document.getElementById('qrDialog');
+  var qrCurrent = { title: '', items: [] };
+
+  function qrDataURL(url) {
+    var qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    return qr.createDataURL(6, 8);
+  }
+  function qrItemsHtml(items) {
+    return items.map(function (it) {
+      return '<div class="qr-item">' +
+        '<img src="' + it.dataUrl + '" alt="QRコード">' +
+        '<div class="qr-label">' + esc(it.label) + '</div>' +
+        '<div class="qr-url">' + esc(it.url) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('btnQr').addEventListener('click', function () {
+    var defs = [
+      { label: 'BASE（ネットショップ）', url: fields.urlBase.value.trim() },
+      { label: 'ホームページ', url: fields.urlHp.value.trim() },
+      { label: 'Instagram・SNS', url: fields.urlSns.value.trim() }
+    ].filter(function (d) { return d.url; });
+    if (defs.length === 0) {
+      toast('先にリンク欄にURLを入力してください');
+      return;
+    }
+    try {
+      defs.forEach(function (d) { d.dataUrl = qrDataURL(d.url); });
+    } catch (e) {
+      toast('QRコードを作れませんでした（URLが長すぎる可能性があります）');
+      return;
+    }
+    qrCurrent = { title: fields.title.value.trim() || '作品', items: defs };
+    document.getElementById('qrTitle').textContent = qrCurrent.title + '　QRコード';
+    document.getElementById('qrBody').innerHTML = qrItemsHtml(defs);
+    qrDialog.hidden = false;
+  });
+  document.getElementById('btnQrClose').addEventListener('click', function () { qrDialog.hidden = true; });
+  qrDialog.addEventListener('click', function (e) {
+    if (e.target === qrDialog) qrDialog.hidden = true;
+  });
+  document.getElementById('btnQrPrint').addEventListener('click', function () {
+    openPrint(
+      '<h1>' + esc(qrCurrent.title) + '</h1>' +
+      '<div class="sheet-sub">Atelier with ／ スマートフォンのカメラで読み取れます</div>' +
+      qrItemsHtml(qrCurrent.items)
+    );
+  });
+
+  /* ---------- 作品リスト ---------- */
+  var searchBox = document.getElementById('searchWorks');
+  var filterKind = document.getElementById('filterKind');
+  var filterStatus = document.getElementById('filterStatus');
+  var filterTag = document.getElementById('filterTag');
+  var filterYear = document.getElementById('filterYear');
+  var filterPrice = document.getElementById('filterPrice');
+  var filterProd = document.getElementById('filterProd');
+  var sortWorks = document.getElementById('sortWorks');
+  var favOnly = document.getElementById('favOnly');
+  [searchBox, filterKind, filterStatus, filterTag, filterYear, filterPrice, filterProd, sortWorks, favOnly].forEach(function (el) {
+    el.addEventListener('input', renderWorks);
+  });
+  var WORK_STATUSES = ['在庫', '委託中', '展示中', '売約済', '販売済'];
+
+  function fillYearOptions() {
+    var years = {};
+    data.works.forEach(function (w) {
+      var y = (w.finishDate || w.startDate || '').slice(0, 4);
+      if (y) years[y] = true;
+    });
+    var keys = Object.keys(years).sort().reverse();
+    var current = filterYear.value;
+    filterYear.innerHTML = '<option value="">制作年：すべて</option>' +
+      keys.map(function (y) { return '<option value="' + y + '">' + y + '年</option>'; }).join('');
+    if (current && years[current]) filterYear.value = current;
+  }
+
+  function fillTagOptions() {
+    var tags = {};
+    data.works.forEach(function (w) {
+      (w.tags || []).forEach(function (t) { tags[t] = true; });
+    });
+    var keys = Object.keys(tags).sort();
+    var current = filterTag.value;
+    filterTag.innerHTML = '<option value="">タグ：すべて</option>' +
+      keys.map(function (t) { return '<option>' + esc(t) + '</option>'; }).join('');
+    if (current && tags[current]) filterTag.value = current;
+  }
+
+  function getFilteredWorks() {
+    var q = searchBox.value.trim().toLowerCase();
+    var kind = filterKind.value;
+    var status = filterStatus.value;
+    var tag = filterTag.value;
+    var year = filterYear.value;
+    var priceBand = filterPrice.value;
+    var prod = filterProd.value;
+    var list = data.works.filter(function (w) {
+      if (kind && w.kind !== kind) return false;
+      if (status && w.status !== status) return false;
+      if (prod && w.prodStatus !== prod) return false;
+      if (tag && (w.tags || []).indexOf(tag) === -1) return false;
+      if (favOnly.checked && !w.favorite) return false;
+      if (year && (w.finishDate || w.startDate || '').slice(0, 4) !== year) return false;
+      if (priceBand) {
+        if (w.price == null) return false;
+        if (priceBand === 'u5' && w.price >= 5000) return false;
+        if (priceBand === 'u10' && (w.price < 5000 || w.price >= 10000)) return false;
+        if (priceBand === 'u30' && (w.price < 10000 || w.price >= 30000)) return false;
+        if (priceBand === 'o30' && w.price < 30000) return false;
+      }
+      if (q) {
+        var text = (w.title + ' ' + (w.workNo || '') + ' ' + (w.series || '') + ' ' + (w.size || '') + ' ' + (w.tags || []).join(' ')).toLowerCase();
+        if (text.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    var mode = sortWorks.value;
+    list.sort(function (a, b) {
+      if (mode === 'finish') return String(b.finishDate || '') < String(a.finishDate || '') ? -1 : 1;
+      if (mode === 'start') return String(b.startDate || '') < String(a.startDate || '') ? -1 : 1;
+      if (mode === 'priceHigh') return (b.price == null ? -1 : b.price) - (a.price == null ? -1 : a.price);
+      if (mode === 'priceLow') return (a.price == null ? Infinity : a.price) - (b.price == null ? Infinity : b.price);
+      return b.createdAt - a.createdAt;
+    });
+    return list;
+  }
+
+  function renderWorks() {
+    fillTagOptions();
+    fillYearOptions();
+    var list = getFilteredWorks();
+    var box = document.getElementById('workList');
+    if (list.length === 0) {
+      box.innerHTML = '<div class="empty-state">' +
+        (data.works.length === 0
+          ? 'まだ作品がありません。「＋ 作品を登録」から始めましょう（タイトルだけでOK）。'
+          : '条件に合う作品が見つかりませんでした。') + '</div>';
+      return;
+    }
+    box.innerHTML = list.map(function (w) {
+      var tagsHtml = (w.tags || []).map(function (t) {
+        return '<span class="tag-pill">' + esc(t) + '</span>';
+      }).join('');
+      var statusSel = '<select class="pill-select st-' + esc(w.status) + '" title="状態をその場で変更">' +
+        WORK_STATUSES.map(function (s) {
+          return '<option' + (w.status === s ? ' selected' : '') + '>' + s + '</option>';
+        }).join('') + '</select>';
+      return '<div class="work-card compact" data-id="' + esc(w.id) + '" title="クリックで詳細をひらく">' +
+        (w.hasImage
+          ? '<span class="thumb-box" title="クリックで拡大"><img data-thumb="' + esc(w.id) + '" alt=""></span>'
+          : '') +
+        '<button class="fav-btn' + (w.favorite ? ' on' : '') + '" title="お気に入り">' +
+          (w.favorite ? '★' : '☆') + '</button>' +
+        '<span class="title">' + esc(w.title) + '</span>' +
+        tagsHtml +
+        (w.prodStatus ? '<span class="pill pp-' + esc(w.prodStatus) + '">' + esc(w.prodStatus) + '</span>' : '') +
+        statusSel +
+        '<span class="price num act-price" title="クリックで価格を変更">' +
+          (w.price != null ? yen(w.price) : '価格未定') + '</span>' +
+        '</div>';
+    }).join('');
+    loadThumbs(box);
+  }
+
+  /* 価格のその場編集（カード上でクリック → 入力 → Enterか外側クリックで確定） */
+  function startPriceEdit(span, w) {
+    var input = document.createElement('input');
+    input.type = 'number';
+    input.min = '0';
+    input.step = '100';
+    input.className = 'price-input num';
+    input.value = w.price != null ? w.price : '';
+    span.replaceWith(input);
+    input.focus();
+    var finished = false;
+    input.addEventListener('blur', function () {
+      if (finished) return;
+      finished = true;
+      var v = input.value.trim();
+      var newPrice = v === '' ? null : Number(v);
+      if (newPrice !== w.price) {
+        w.price = newPrice;
+        w.updatedAt = Date.now();
+        save();
+        toast('価格を変更しました');
+      }
+      renderWorks();
+    });
+    input.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') input.blur();
+      if (ev.key === 'Escape') {
+        finished = true;
+        renderWorks();
+      }
+    });
+  }
+
+  document.getElementById('workList').addEventListener('click', function (e) {
+    var card = e.target.closest('.work-card');
+    if (!card) return;
+    var w = data.works.find(function (x) { return x.id === card.dataset.id; });
+    if (!w) return;
+    if (e.target.closest('.thumb-box')) {
+      openLightbox(w);
+    } else if (e.target.classList.contains('fav-btn')) {
+      w.favorite = !w.favorite;
+      w.updatedAt = Date.now();
+      save();
+      renderWorks();
+    } else if (e.target.classList.contains('act-price')) {
+      startPriceEdit(e.target, w);
+    } else if (e.target.classList.contains('pill-select') || e.target.tagName === 'INPUT') {
+      /* セレクトや価格入力そのものは、カードを開かない */
+    } else {
+      openForm(w);
+      window.scrollTo({ top: 0 });
+    }
+  });
+
+  /* 状態のその場変更（カード上のプルダウン） */
+  document.getElementById('workList').addEventListener('change', function (e) {
+    if (!e.target.classList.contains('pill-select')) return;
+    var card = e.target.closest('.work-card');
+    var w = data.works.find(function (x) { return x.id === card.dataset.id; });
+    if (!w) return;
+    var val = e.target.value;
+    if (w.status !== val) {
+      w.status = val;
+      pushStatusHistory(w, val);
+      w.updatedAt = Date.now();
+      save();
+      renderWorks();
+      renderDashboard();
+      toast('「' + w.title + '」を' + val + 'にしました');
+    }
+  });
+
+  /* ---------- イベント ---------- */
+  var eventFormPanel = document.getElementById('eventForm');
+  var editingEventId = null;
+  var eFields = {
+    title: document.getElementById('eTitle'),
+    kind: document.getElementById('eKind'),
+    date: document.getElementById('eDate'),
+    time: document.getElementById('eTime'),
+    venue: document.getElementById('eVenue'),
+    capacity: document.getElementById('eCapacity'),
+    fee: document.getElementById('eFee'),
+    status: document.getElementById('eStatus'),
+    prep: document.getElementById('ePrep'),
+    note: document.getElementById('eNote')
+  };
+
+  function openEventForm(ev) {
+    editingEventId = ev ? ev.id : null;
+    document.getElementById('eventFormTitle').textContent = ev ? 'イベントを編集' : '新しいイベントを登録';
+    document.getElementById('btnSaveEvent').textContent = ev ? '更新する' : '登録する';
+    eFields.title.value = ev ? ev.title : '';
+    eFields.kind.value = ev ? ev.kind : 'ワークショップ';
+    eFields.date.value = ev ? ev.date : '';
+    eFields.time.value = ev ? ev.time : '';
+    eFields.venue.value = ev ? ev.venue : '';
+    eFields.capacity.value = ev && ev.capacity != null ? ev.capacity : '';
+    eFields.fee.value = ev && ev.fee != null ? ev.fee : '';
+    eFields.status.value = ev ? ev.status : '予定';
+    eFields.prep.value = ev ? ev.prep : '';
+    eFields.note.value = ev ? ev.note : '';
+    eventFormPanel.classList.add('open');
+    eFields.title.focus();
+  }
+  function closeEventForm() {
+    eventFormPanel.classList.remove('open');
+    editingEventId = null;
+  }
+
+  document.getElementById('btnNewEvent').addEventListener('click', function () { openEventForm(null); });
+  document.getElementById('btnCancelEvent').addEventListener('click', closeEventForm);
+
+  document.getElementById('btnSaveEvent').addEventListener('click', function () {
+    var title = eFields.title.value.trim();
+    if (!title) { toast('タイトルを入力してください'); eFields.title.focus(); return; }
+    if (!eFields.date.value) { toast('日付を選んでください'); eFields.date.focus(); return; }
+    var capRaw = eFields.capacity.value.trim();
+    var feeRaw = eFields.fee.value.trim();
+    var entry = {
+      title: title,
+      kind: eFields.kind.value,
+      date: eFields.date.value,
+      time: eFields.time.value.trim(),
+      venue: eFields.venue.value.trim(),
+      capacity: capRaw === '' ? null : Number(capRaw),
+      fee: feeRaw === '' ? null : Number(feeRaw),
+      status: eFields.status.value,
+      prep: eFields.prep.value.trim(),
+      note: eFields.note.value.trim()
+    };
+    if (editingEventId) {
+      var ev = data.events.find(function (x) { return x.id === editingEventId; });
+      if (ev) Object.assign(ev, entry);
+      toast('「' + title + '」を更新しました');
+    } else {
+      entry.id = 'e' + Date.now() + Math.random().toString(36).slice(2, 6);
+      entry.createdAt = Date.now();
+      entry.participantIds = [];
+      data.events.push(entry);
+      toast('「' + title + '」を登録しました');
+    }
+    save();
+    closeEventForm();
+    renderEvents();
+    renderDashboard();
+  });
+
+  var searchEventsBox = document.getElementById('searchEvents');
+  var filterEventKind = document.getElementById('filterEventKind');
+  var showPastEvents = document.getElementById('showPastEvents');
+  [searchEventsBox, filterEventKind, showPastEvents].forEach(function (el) {
+    el.addEventListener('input', renderEvents);
+  });
+
+  function renderEvents() {
+    var q = searchEventsBox.value.trim().toLowerCase();
+    var kind = filterEventKind.value;
+    var showPast = showPastEvents.checked;
+    var list = data.events.filter(function (ev) {
+      if (!showPast && (ev.status === '開催済' || ev.status === '中止')) return false;
+      if (kind && ev.kind !== kind) return false;
+      if (q && (ev.title + ' ' + (ev.venue || '')).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+
+    var box = document.getElementById('eventList');
+    if (list.length === 0) {
+      box.innerHTML = '<div class="empty-state">' +
+        (data.events.length === 0
+          ? 'まだイベントがありません。「＋ 新しいイベントを登録」から始めましょう。'
+          : '条件に合うイベントが見つかりませんでした。') + '</div>';
+      return;
+    }
+    box.innerHTML = list.map(function (ev) {
+      var metaParts = [ev.time, ev.venue].filter(Boolean).map(esc);
+      var feeStr = yen(ev.fee);
+      var capLabel = '参加者 ' + ev.participantIds.length + '人' + (ev.capacity ? ' ／ 定員 ' + ev.capacity + '人' : '');
+      var joinerBody;
+      if (data.people.length === 0) {
+        joinerBody = '<div class="none-msg">「お客様」タブで人を登録すると、ここで参加チェックできるようになります。</div>';
+      } else {
+        joinerBody = '<div class="joiner-list">' + data.people.map(function (p) {
+          var checked = ev.participantIds.indexOf(p.id) !== -1 ? ' checked' : '';
+          return '<label><input type="checkbox" class="joiner-check" data-person="' + esc(p.id) + '"' + checked + '> ' + esc(p.name) + '</label>';
+        }).join('') + '</div>';
+      }
+      return '<div class="work-card" data-id="' + esc(ev.id) + '">' +
+        '<span class="event-date num">' + fmtDate(ev.date) + '</span>' +
+        '<span class="title">' + esc(ev.title) + '</span>' +
+        '<span class="pill kind">' + esc(ev.kind) + '</span>' +
+        '<span class="pill st-' + esc(ev.status) + '">' + esc(ev.status) + '</span>' +
+        (metaParts.length ? '<span class="meta">' + metaParts.join(' ／ ') + '</span>' : '') +
+        '<span class="price num">' + feeStr + '</span>' +
+        '<span class="actions">' +
+          '<button class="btn small act-print" title="参加者名簿を印刷・PDF保存します">名簿</button>' +
+          '<button class="btn small act-edit">編集</button>' +
+          '<button class="btn small danger-text act-del">削除</button>' +
+        '</span>' +
+        (ev.prep ? '<span class="note-line">準備物：' + esc(ev.prep) + '</span>' : '') +
+        (ev.note ? '<span class="note-line">' + esc(ev.note) + '</span>' : '') +
+        '<details class="joiners"><summary>' + capLabel + '</summary>' + joinerBody + '</details>' +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('eventList').addEventListener('click', function (e) {
+    var card = e.target.closest('.work-card');
+    if (!card) return;
+    var ev = data.events.find(function (x) { return x.id === card.dataset.id; });
+    if (!ev) return;
+    if (e.target.classList.contains('act-print')) {
+      printEventRoster(ev);
+    } else if (e.target.classList.contains('act-edit')) {
+      openEventForm(ev);
+      window.scrollTo({ top: 0 });
+    } else if (e.target.classList.contains('act-del')) {
+      if (confirm('「' + ev.title + '」を削除しますか？\nこの操作は元に戻せません。')) {
+        data.events = data.events.filter(function (x) { return x.id !== ev.id; });
+        save();
+        renderEvents();
+        renderDashboard();
+        toast('削除しました');
+      }
+    }
+  });
+
+  document.getElementById('eventList').addEventListener('change', function (e) {
+    if (!e.target.classList.contains('joiner-check')) return;
+    var card = e.target.closest('.work-card');
+    var ev = data.events.find(function (x) { return x.id === card.dataset.id; });
+    if (!ev) return;
+    var pid = e.target.dataset.person;
+    if (e.target.checked) {
+      if (ev.participantIds.indexOf(pid) === -1) ev.participantIds.push(pid);
+    } else {
+      ev.participantIds = ev.participantIds.filter(function (x) { return x !== pid; });
+    }
+    save();
+    card.querySelector('.joiners summary').textContent =
+      '参加者 ' + ev.participantIds.length + '人' + (ev.capacity ? ' ／ 定員 ' + ev.capacity + '人' : '');
+    renderDashboard();
+  });
+
+  /* ---------- 参加者・お客さま ---------- */
+  var personFormPanel = document.getElementById('personForm');
+  var editingPersonId = null;
+  var pFields = {
+    name: document.getElementById('pName'),
+    tag: document.getElementById('pTag'),
+    contact: document.getElementById('pContact'),
+    note: document.getElementById('pNote')
+  };
+
+  function openPersonForm(p) {
+    editingPersonId = p ? p.id : null;
+    document.getElementById('personFormTitle').textContent = p ? '登録内容を編集' : '新しい人を登録';
+    document.getElementById('btnSavePerson').textContent = p ? '更新する' : '登録する';
+    pFields.name.value = p ? p.name : '';
+    pFields.tag.value = p ? p.tag : '参加者';
+    pFields.contact.value = p ? p.contact : '';
+    pFields.note.value = p ? p.note : '';
+    personFormPanel.classList.add('open');
+    pFields.name.focus();
+  }
+  function closePersonForm() {
+    personFormPanel.classList.remove('open');
+    editingPersonId = null;
+  }
+
+  document.getElementById('btnNewPerson').addEventListener('click', function () { openPersonForm(null); });
+  document.getElementById('btnCancelPerson').addEventListener('click', closePersonForm);
+
+  document.getElementById('btnSavePerson').addEventListener('click', function () {
+    var name = pFields.name.value.trim();
+    if (!name) { toast('お名前を入力してください'); pFields.name.focus(); return; }
+    var entry = {
+      name: name,
+      tag: pFields.tag.value,
+      contact: pFields.contact.value.trim(),
+      note: pFields.note.value.trim()
+    };
+    if (editingPersonId) {
+      var p = data.people.find(function (x) { return x.id === editingPersonId; });
+      if (p) Object.assign(p, entry);
+      toast('「' + name + '」さんの情報を更新しました');
+    } else {
+      entry.id = 'p' + Date.now() + Math.random().toString(36).slice(2, 6);
+      entry.createdAt = Date.now();
+      data.people.push(entry);
+      toast('「' + name + '」さんを登録しました');
+    }
+    save();
+    closePersonForm();
+    renderPeople();
+    renderEvents();
+  });
+
+  var searchPeopleBox = document.getElementById('searchPeople');
+  var filterPersonTag = document.getElementById('filterPersonTag');
+  [searchPeopleBox, filterPersonTag].forEach(function (el) {
+    el.addEventListener('input', renderPeople);
+  });
+
+  function renderPeople() {
+    var q = searchPeopleBox.value.trim().toLowerCase();
+    var tag = filterPersonTag.value;
+    var list = data.people.filter(function (p) {
+      if (tag && p.tag !== tag) return false;
+      if (q && p.name.toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }).sort(function (a, b) { return b.createdAt - a.createdAt; });
+
+    var box = document.getElementById('personList');
+    if (list.length === 0) {
+      box.innerHTML = '<div class="empty-state">' +
+        (data.people.length === 0
+          ? 'まだ登録がありません。「＋ 新しい人を登録」から始めましょう。'
+          : '条件に合う人が見つかりませんでした。') + '</div>';
+      return;
+    }
+    box.innerHTML = list.map(function (p) {
+      var joined = data.events.filter(function (ev) {
+        return ev.participantIds.indexOf(p.id) !== -1;
+      }).sort(function (a, b) { return a.date < b.date ? -1 : 1; })
+        .map(function (ev) { return esc(fmtDate(ev.date) + ' ' + ev.title); });
+      return '<div class="work-card" data-id="' + esc(p.id) + '">' +
+        '<span class="title">' + esc(p.name) + '</span>' +
+        '<span class="pill kind">' + esc(p.tag) + '</span>' +
+        (p.contact ? '<span class="meta">' + esc(p.contact) + '</span>' : '') +
+        '<span class="actions" style="margin-left:auto;">' +
+          '<button class="btn small act-edit">編集</button>' +
+          '<button class="btn small danger-text act-del">削除</button>' +
+        '</span>' +
+        (p.note ? '<span class="note-line">' + esc(p.note) + '</span>' : '') +
+        (joined.length ? '<span class="note-line">参加イベント：' + joined.join('、') + '</span>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('personList').addEventListener('click', function (e) {
+    var card = e.target.closest('.work-card');
+    if (!card) return;
+    var p = data.people.find(function (x) { return x.id === card.dataset.id; });
+    if (!p) return;
+    if (e.target.classList.contains('act-edit')) {
+      openPersonForm(p);
+      window.scrollTo({ top: 0 });
+    } else if (e.target.classList.contains('act-del')) {
+      if (confirm('「' + p.name + '」さんを削除しますか？\nイベントの参加チェックからも外れます。')) {
+        data.people = data.people.filter(function (x) { return x.id !== p.id; });
+        data.events.forEach(function (ev) {
+          ev.participantIds = ev.participantIds.filter(function (x) { return x !== p.id; });
+        });
+        save();
+        renderPeople();
+        renderEvents();
+        toast('削除しました');
+      }
+    }
+  });
+
+  /* ---------- 売上記録 ---------- */
+  var saleFormPanel = document.getElementById('saleForm');
+  var editingSaleId = null;
+  var sFields = {
+    date: document.getElementById('sDate'),
+    kind: document.getElementById('sKind'),
+    work: document.getElementById('sWork'),
+    title: document.getElementById('sTitle'),
+    amount: document.getElementById('sAmount'),
+    buyer: document.getElementById('sBuyer'),
+    note: document.getElementById('sNote'),
+    markSold: document.getElementById('sMarkSold')
+  };
+  var markSoldField = document.getElementById('markSoldField');
+
+  function fmtMonth(ym) {
+    var p = ym.split('-');
+    return Number(p[0]) + '年' + Number(p[1]) + '月';
+  }
+
+  function fillWorkOptions(selectedId) {
+    var opts = '<option value="">つなげない（自由に入力）</option>';
+    data.works.slice().sort(function (a, b) { return b.createdAt - a.createdAt; })
+      .forEach(function (w) {
+        var sel = w.id === selectedId ? ' selected' : '';
+        opts += '<option value="' + esc(w.id) + '"' + sel + '>' +
+          esc(w.title) + '（' + esc(w.kind) + '・' + esc(w.status) + '）</option>';
+      });
+    sFields.work.innerHTML = opts;
+  }
+
+  sFields.work.addEventListener('change', function () {
+    var w = data.works.find(function (x) { return x.id === sFields.work.value; });
+    if (w) {
+      sFields.title.value = w.title;
+      if (['原画', 'アクセサリー', 'グッズ'].indexOf(w.kind) !== -1) sFields.kind.value = w.kind;
+      if (w.price != null && sFields.amount.value === '') sFields.amount.value = w.price;
+      markSoldField.style.display = '';
+      sFields.markSold.checked = w.status !== '販売済';
+    } else {
+      markSoldField.style.display = 'none';
+    }
+  });
+
+  function openSaleForm(s) {
+    editingSaleId = s ? s.id : null;
+    document.getElementById('saleFormTitle').textContent = s ? '売上を編集' : '売上を記録';
+    document.getElementById('btnSaveSale').textContent = s ? '更新する' : '記録する';
+    fillWorkOptions(s ? s.workId : null);
+    sFields.date.value = s ? s.date : todayISO();
+    sFields.kind.value = s ? s.kind : '原画';
+    sFields.title.value = s ? s.title : '';
+    sFields.amount.value = s && s.amount != null ? s.amount : '';
+    sFields.buyer.value = s ? s.buyer : '';
+    sFields.note.value = s ? s.note : '';
+    markSoldField.style.display = 'none';
+    saleFormPanel.classList.add('open');
+    sFields.title.focus();
+  }
+  function closeSaleForm() {
+    saleFormPanel.classList.remove('open');
+    editingSaleId = null;
+  }
+
+  document.getElementById('btnNewSale').addEventListener('click', function () { openSaleForm(null); });
+  document.getElementById('btnCancelSale').addEventListener('click', closeSaleForm);
+
+  document.getElementById('btnSaveSale').addEventListener('click', function () {
+    if (!sFields.date.value) { toast('日付を選んでください'); sFields.date.focus(); return; }
+    var title = sFields.title.value.trim();
+    if (!title) { toast('内容を入力してください'); sFields.title.focus(); return; }
+    var amountRaw = sFields.amount.value.trim();
+    if (amountRaw === '' || isNaN(Number(amountRaw))) {
+      toast('金額を入力してください'); sFields.amount.focus(); return;
+    }
+    var entry = {
+      date: sFields.date.value,
+      kind: sFields.kind.value,
+      title: title,
+      amount: Number(amountRaw),
+      buyer: sFields.buyer.value.trim(),
+      note: sFields.note.value.trim(),
+      workId: sFields.work.value || null
+    };
+    if (editingSaleId) {
+      var s = data.sales.find(function (x) { return x.id === editingSaleId; });
+      if (s) Object.assign(s, entry);
+      toast('売上を更新しました');
+    } else {
+      entry.id = 's' + Date.now() + Math.random().toString(36).slice(2, 6);
+      entry.createdAt = Date.now();
+      data.sales.push(entry);
+      toast('売上を記録しました');
+    }
+    if (entry.workId) {
+      var w = data.works.find(function (x) { return x.id === entry.workId; });
+      if (w) {
+        if (markSoldField.style.display !== 'none' && sFields.markSold.checked && w.status !== '販売済') {
+          w.status = '販売済';
+          pushStatusHistory(w, '販売済', entry.date);
+        }
+        // 売上のお相手を、作品カルテの購入者にも記録しておく（未記入のときだけ）
+        if (entry.buyer && !w.buyer) w.buyer = entry.buyer;
+        renderWorks();
+      }
+    }
+    save();
+    closeSaleForm();
+    renderSales();
+    renderDashboard();
+  });
+
+  var searchSalesBox = document.getElementById('searchSales');
+  var filterSaleMonth = document.getElementById('filterSaleMonth');
+  var filterSaleKind = document.getElementById('filterSaleKind');
+  [searchSalesBox, filterSaleMonth, filterSaleKind].forEach(function (el) {
+    el.addEventListener('input', renderSales);
+  });
+
+  function fillMonthOptions() {
+    var months = {};
+    months[todayISO().slice(0, 7)] = true;
+    data.sales.forEach(function (s) { if (s.date) months[s.date.slice(0, 7)] = true; });
+    var keys = Object.keys(months).sort().reverse();
+    var current = filterSaleMonth.value;
+    filterSaleMonth.innerHTML = '<option value="">月：すべて</option>' +
+      keys.map(function (m) {
+        return '<option value="' + m + '">' + fmtMonth(m) + '</option>';
+      }).join('');
+    if (current && months[current]) filterSaleMonth.value = current;
+  }
+
+  function renderSales() {
+    fillMonthOptions();
+    var q = searchSalesBox.value.trim().toLowerCase();
+    var month = filterSaleMonth.value;
+    var kind = filterSaleKind.value;
+    var list = data.sales.filter(function (s) {
+      if (month && (!s.date || s.date.slice(0, 7) !== month)) return false;
+      if (kind && s.kind !== kind) return false;
+      if (q && (s.title + ' ' + (s.buyer || '')).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt; });
+
+    var total = list.reduce(function (sum, s) { return sum + (Number(s.amount) || 0); }, 0);
+    var scope = month ? fmtMonth(month) + 'の' : '表示中の';
+    document.getElementById('salesSummary').innerHTML =
+      '<div class="stat-card"><div class="label">' + scope + '売上合計</div>' +
+      '<div class="value num">' + total.toLocaleString('ja-JP') + '<span class="unit">円</span></div></div>' +
+      '<div class="stat-card"><div class="label">' + scope + '件数</div>' +
+      '<div class="value num">' + list.length + '<span class="unit">件</span></div></div>';
+
+    var byKind = {};
+    list.forEach(function (s) {
+      if (!byKind[s.kind]) byKind[s.kind] = { total: 0, count: 0 };
+      byKind[s.kind].total += Number(s.amount) || 0;
+      byKind[s.kind].count++;
+    });
+    var kinds = Object.keys(byKind);
+    var breakdownBox = document.getElementById('salesBreakdownBox');
+    if (kinds.length >= 2) {
+      breakdownBox.style.display = '';
+      document.getElementById('salesBreakdown').innerHTML = kinds.map(function (k) {
+        return '<div class="work-card" style="box-shadow:none;margin-bottom:8px;">' +
+          '<span class="pill kind">' + esc(k) + '</span>' +
+          '<span class="meta">' + byKind[k].count + '件</span>' +
+          '<span class="price num">' + yen(byKind[k].total) + '</span>' +
+          '</div>';
+      }).join('');
+    } else {
+      breakdownBox.style.display = 'none';
+    }
+
+    var box = document.getElementById('saleList');
+    if (list.length === 0) {
+      box.innerHTML = '<div class="empty-state">' +
+        (data.sales.length === 0
+          ? 'まだ売上の記録がありません。「＋ 売上を記録」から始めましょう。'
+          : '条件に合う記録が見つかりませんでした。') + '</div>';
+      return;
+    }
+    box.innerHTML = list.map(function (s) {
+      var metaParts = [];
+      if (s.buyer) metaParts.push(esc(s.buyer));
+      return '<div class="work-card" data-id="' + esc(s.id) + '">' +
+        '<span class="event-date num">' + fmtDate(s.date) + '</span>' +
+        '<span class="title">' + esc(s.title) + '</span>' +
+        '<span class="pill kind">' + esc(s.kind) + '</span>' +
+        (metaParts.length ? '<span class="meta">' + metaParts.join(' ／ ') + '</span>' : '') +
+        '<span class="price num">' + yen(s.amount) + '</span>' +
+        '<span class="actions">' +
+          '<button class="btn small act-edit">編集</button>' +
+          '<button class="btn small danger-text act-del">削除</button>' +
+        '</span>' +
+        (s.note ? '<span class="note-line">' + esc(s.note) + '</span>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('saleList').addEventListener('click', function (e) {
+    var card = e.target.closest('.work-card');
+    if (!card) return;
+    var s = data.sales.find(function (x) { return x.id === card.dataset.id; });
+    if (!s) return;
+    if (e.target.classList.contains('act-edit')) {
+      openSaleForm(s);
+      window.scrollTo({ top: 0 });
+    } else if (e.target.classList.contains('act-del')) {
+      if (confirm('「' + s.title + '」（' + yen(s.amount) + '）の記録を削除しますか？\nこの操作は元に戻せません。\n※作品の状態は変わりません。')) {
+        data.sales = data.sales.filter(function (x) { return x.id !== s.id; });
+        save();
+        renderSales();
+        renderDashboard();
+        toast('削除しました');
+      }
+    }
+  });
+
+  /* ---------- 印刷・共有ビュー ---------- */
+  var printSheet = document.getElementById('printSheet');
+
+  function fmtDateFull(iso) {
+    if (!iso) return '';
+    var p = iso.split('-');
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    var wd = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+    return Number(p[0]) + '年' + Number(p[1]) + '月' + Number(p[2]) + '日（' + wd + '）';
+  }
+
+  function openPrint(html) {
+    printSheet.innerHTML = html;
+    window.print();
+  }
+
+  document.getElementById('btnPrintWorks').addEventListener('click', function () {
+    var list = getFilteredWorks();
+    if (list.length === 0) { toast('印刷できる作品がありません'); return; }
+    var conds = [];
+    if (filterKind.value) conds.push('種類：' + filterKind.value);
+    if (filterStatus.value) conds.push('状態：' + filterStatus.value);
+    if (searchBox.value.trim()) conds.push('検索：「' + searchBox.value.trim() + '」');
+    var rows = list.map(function (w, i) {
+      return '<tr>' +
+        '<td class="cell-no">' + (i + 1) + '</td>' +
+        '<td>' + esc(w.title) + '</td>' +
+        '<td>' + esc(w.kind) + '</td>' +
+        '<td>' + esc([w.series, w.size].filter(Boolean).join(' ／ ')) + '</td>' +
+        '<td class="cell-num">' + yen(w.price) + '</td>' +
+        '<td>' + esc(w.status) + '</td>' +
+        '<td>' + esc(w.note) + '</td>' +
+        '</tr>';
+    }).join('');
+    openPrint(
+      '<h1>作品リスト</h1>' +
+      '<div class="sheet-sub">Atelier with ／ 出力日：' + fmtDateFull(todayISO()) +
+        ' ／ ' + list.length + '点' +
+        (conds.length ? ' ／ ' + esc(conds.join('、')) : '') + '</div>' +
+      '<table><tr><th></th><th>タイトル</th><th>種類</th><th>シリーズ・サイズ</th><th>価格</th><th>状態</th><th>メモ</th></tr>' +
+      rows + '</table>'
+    );
+  });
+
+  function printEventRoster(ev) {
+    var joiners = data.people.filter(function (p) {
+      return ev.participantIds.indexOf(p.id) !== -1;
+    });
+    var rows = joiners.map(function (p, i) {
+      return '<tr>' +
+        '<td class="cell-no">' + (i + 1) + '</td>' +
+        '<td>' + esc(p.name) + '</td>' +
+        '<td>' + esc(p.contact) + '</td>' +
+        '<td>' + esc(p.note) + '</td>' +
+        '<td class="cell-check"></td>' +
+        '</tr>';
+    }).join('');
+    // 当日参加の書き込み用に空行を3行たしておく
+    for (var i = 0; i < 3; i++) {
+      rows += '<tr><td class="cell-no">' + (joiners.length + i + 1) + '</td>' +
+        '<td>&nbsp;</td><td></td><td></td><td class="cell-check"></td></tr>';
+    }
+    var infoLines =
+      '<div class="info-line">日時：' + esc(fmtDateFull(ev.date) + (ev.time ? ' ' + ev.time : '')) + '</div>' +
+      (ev.venue ? '<div class="info-line">会場：' + esc(ev.venue) + '</div>' : '') +
+      '<div class="info-line">' +
+        (ev.fee != null ? '参加費：' + yen(ev.fee) : '') +
+        (ev.fee != null && ev.capacity ? ' ／ ' : '') +
+        (ev.capacity ? '定員：' + ev.capacity + '人（申込 ' + joiners.length + '人）' : '') +
+      '</div>' +
+      (ev.prep ? '<div class="info-line">準備物：' + esc(ev.prep) + '</div>' : '');
+    openPrint(
+      '<h1>' + esc(ev.title) + '　参加者名簿</h1>' +
+      '<div class="sheet-sub">Atelier with ／ 出力日：' + fmtDateFull(todayISO()) + '</div>' +
+      infoLines +
+      '<table><tr><th></th><th>お名前</th><th>連絡先</th><th>メモ</th><th>出席</th></tr>' +
+      rows + '</table>' +
+      '<div class="sheet-note">※ 出席欄は当日チェックにお使いください。</div>'
+    );
+  }
+
+  /* ---------- バックアップ ----------
+     形式v2: {version:2, works, events, people, sales, images:[{id,full,thumb}]}
+     旧形式（imagesなし）もそのまま復元できる。 */
+  document.getElementById('btnExport').addEventListener('click', function () {
+    idbAll().then(function (images) {
+      var payload = {
+        version: 2,
+        works: data.works,
+        events: data.events,
+        people: data.people,
+        sales: data.sales,
+        taskDone: data.taskDone,
+        images: images || []
+      };
+      var d = new Date();
+      var stamp = d.getFullYear() +
+        ('0' + (d.getMonth() + 1)).slice(-2) +
+        ('0' + d.getDate()).slice(-2);
+      var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'AtelierWithバックアップ-' + stamp + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('バックアップファイルを保存しました（画像も含まれます）');
+    }).catch(function () {
+      toast('バックアップの作成に失敗しました');
+    });
+  });
+
+  document.getElementById('btnImport').addEventListener('click', function () {
+    document.getElementById('fileImport').click();
+  });
+  document.getElementById('fileImport').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var d = JSON.parse(reader.result);
+        if (!d || !Array.isArray(d.works)) throw new Error('形式が違います');
+        var counts = 'このバックアップの内容：\n' +
+          '　作品 ' + d.works.length + ' 点\n' +
+          '　イベント ' + (Array.isArray(d.events) ? d.events.length : 0) + ' 件\n' +
+          '　参加者 ' + (Array.isArray(d.people) ? d.people.length : 0) + ' 人\n' +
+          '　売上 ' + (Array.isArray(d.sales) ? d.sales.length : 0) + ' 件\n' +
+          '　画像 ' + (Array.isArray(d.images) ? d.images.length : 0) + ' 枚\n\n' +
+          'いまのデータをこの内容で置き換えますか？';
+        if (!confirm(counts)) { e.target.value = ''; return; }
+        data = normalize(d);
+        save();
+        var imgOp = Promise.resolve();
+        if (Array.isArray(d.images)) {
+          imgOp = idbClear().then(function () {
+            return Promise.all(d.images.map(function (rec) {
+              return rec && rec.id ? idbPut(rec) : Promise.resolve();
+            }));
+          }).then(function () { thumbCache.clear(); });
+        }
+        imgOp.then(function () {
+          renderWorks();
+          renderEvents();
+          renderPeople();
+          renderSales();
+          renderDashboard();
+          toast('バックアップから復元しました');
+        });
+      } catch (err) {
+        alert('このファイルは読み込めませんでした。「バックアップを保存」で作ったJSONファイルを選んでください。');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  /* ---------- 初期表示 ---------- */
+  renderWorks();
+  renderEvents();
+  renderPeople();
+  renderSales();
+  renderDashboard();
+  updateDataCounts();
+  dailySnapshot();
+})();
+</script>
+</body>
+</html>
